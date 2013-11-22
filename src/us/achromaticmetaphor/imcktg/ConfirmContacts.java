@@ -1,0 +1,232 @@
+package us.achromaticmetaphor.imcktg;
+
+import java.io.IOException;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.database.Cursor;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.speech.tts.TextToSpeech;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+public class ConfirmContacts extends Activity implements TextToSpeech.OnInitListener {
+
+  private static final String extrakeyprefix = "us.achromaticmetaphor.imcktg.ConfirmContacts";
+  public static final String extrakeySelection = extrakeyprefix + ".selection";
+  public static final String extrakeyTonestring = extrakeyprefix + ".tonestring";
+  public static final String extrakeyFordefault = extrakeyprefix + ".forDefault";
+
+  private int outstandingTones;
+  private TextToSpeech tts;
+  private String previewText;
+  private ProgressDialog pdia;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_confirm_contacts);
+
+    findViewById(R.id.WPM_preview_TTS).setEnabled(false);
+    findViewById(R.id.WPM_confirm_TTS).setEnabled(false);
+    tts = new TextToSpeech(this, this);
+
+    if (getIntent().getBooleanExtra(extrakeyFordefault, false))
+      previewText = getIntent().getStringExtra(extrakeyTonestring);
+    else {
+      long [] selection = getIntent().getLongArrayExtra(extrakeySelection);
+      if (selection.length == 0)
+        previewText = "preview";
+      else
+        previewText = nameForContact(contactUriForID(selection[0]));
+    }
+
+    ((SeekBar) findViewById(R.id.WPM_input)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        ((TextView) findViewById(R.id.WPM_hint)).setText("" + wpm());
+      }
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {}
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {}
+    });
+
+    ((SeekBar) findViewById(R.id.FREQ_input)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        ((TextView) findViewById(R.id.FREQ_hint)).setText("" + freqRescaled(20, 4410));
+      }
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {}
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {}
+    });
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    tts.shutdown();
+  }
+
+  private class Listener implements AsyncGenerateMorseTones.Listener {
+    @Override
+    public void onFinished(Tone tone) {
+      ConfirmContacts.this.decrementOutstandingTones();
+    }
+  }
+
+  private void checkDone() {
+    if (outstandingTones <= 0) {
+      pdia.dismiss();
+      finish();
+    }
+  }
+
+  public synchronized void decrementOutstandingTones() {
+    outstandingTones--;
+    checkDone();
+  }
+
+  private Uri contactUriForID(long id) {
+    return Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI,  "" + id);
+  }
+
+  private String nameForContact(Uri contacturi) {
+    Cursor cursor = getContentResolver().query(contacturi,
+                new String [] {ContactsContract.Contacts.DISPLAY_NAME},
+                null, null, null);
+    cursor.moveToNext();
+    return cursor.getString(0);
+  }
+
+  public void generateAndAssignTones(ToneGenerator gen) {
+    pdia = ProgressDialog.show(this, "Generating", "Please wait", true, false);
+    if (getIntent().getBooleanExtra(extrakeyFordefault, false)) {
+      final String tonestring = getIntent().getStringExtra(extrakeyTonestring);
+      outstandingTones = 1;
+      final AsyncGenerateMorseTones async = new AsyncGenerateMorseTones();
+      async.execute(new AsyncGenerateMorseTones.Params(new Listener(), this, tonestring, gen, null, getIntent()));
+    }
+    else {
+      final long [] selection = getIntent().getLongArrayExtra(extrakeySelection);
+      outstandingTones = selection.length;
+      for (long id : selection) {
+        final Uri contacturi = contactUriForID(id);
+        final String name = nameForContact(contacturi);
+        final AsyncGenerateMorseTones async = new AsyncGenerateMorseTones();
+        async.execute(new AsyncGenerateMorseTones.Params(new Listener(), this, name, gen, contacturi, getIntent()));
+      }
+    }
+    checkDone();
+  }
+
+  public void generateAndAssignTonesMorsePCM(View view) {
+    generateAndAssignTones(pcmGen());
+  }
+
+  public void generateAndAssignTonesMorseIMelody(View view) {
+    generateAndAssignTones(imyGen());
+  }
+
+  public void generateAndAssignTonesTTS(View view) {
+    generateAndAssignTones(ttsGen());
+  }
+
+  private class OAFCL implements AudioManager.OnAudioFocusChangeListener, MediaPlayer.OnCompletionListener {
+    private final AudioManager aman;
+    private final Tone preview;
+
+    public OAFCL(AudioManager aman, Tone preview) {
+      this.aman = aman;
+      this.preview = preview;
+    }
+
+    @Override
+    public void onAudioFocusChange(int focusChange) {}
+
+    @Override
+    public void onCompletion(MediaPlayer player) {
+      player.release();
+      aman.abandonAudioFocus(this);
+      preview.delete(ConfirmContacts.this);
+    }
+  }
+
+  private int freqRescaled(int min, int max) {
+    ProgressBar pbar = ((ProgressBar) findViewById(R.id.FREQ_input));
+    final int freq = pbar.getProgress();
+    final int pmax = pbar.getMax();
+    return min + ((max - min) * freq / pmax);
+  }
+
+  private float freqRescaled() {
+    return (freqRescaled(20, 4410) + 2195) / 2195.0f;
+  }
+
+  private int wpm() {
+    return 1 + ((ProgressBar) findViewById(R.id.WPM_input)).getProgress();
+  }
+
+  private ToneGenerator pcmGen() {
+    return new MorsePCM(freqRescaled(20, 4410), wpm());
+  }
+
+  private ToneGenerator imyGen() {
+    final int ftone = freqRescaled(0, 56);
+    final int octave = ftone / 7;
+    final int fnote = ftone % 7;
+    final String note = "abcdefg".substring(fnote).substring(0, 1);
+    return new MorseIMelody(octave, note, wpm());
+  }
+
+  private ToneGenerator ttsGen() {
+    return new TTS(tts, freqRescaled(), wpm() / 20.0f);
+  }
+
+  public void previewMorsePCM(View view) {
+    previewTone(pcmGen());
+  }
+
+  public void previewMorseIMelody(View view) {
+    previewTone(imyGen());
+  }
+
+  public void previewTTS(View view) {
+    previewTone(ttsGen());
+  }
+
+  public void previewTone(ToneGenerator gen) {
+    AudioManager aman = (AudioManager) getSystemService(AUDIO_SERVICE);
+    MediaPlayer player;
+    try {
+      Tone preview = Tone.generateTone(this, previewText, gen);
+      player = MediaPlayer.create(this, preview.contentUri());
+      OAFCL oafcl = new OAFCL(aman, preview);
+      aman.requestAudioFocus(oafcl, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+      player.setOnCompletionListener(oafcl);
+      player.start();
+    } catch (IOException e) {
+    }
+  }
+
+  @Override
+  public void onInit(int status) {
+    if (status == TextToSpeech.SUCCESS)
+      enableTTS();
+  }
+
+  private void enableTTS() {
+    findViewById(R.id.WPM_confirm_TTS).setEnabled(true);
+    findViewById(R.id.WPM_preview_TTS).setEnabled(true);
+  }
+
+}
