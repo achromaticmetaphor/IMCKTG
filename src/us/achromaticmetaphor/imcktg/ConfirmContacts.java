@@ -1,6 +1,7 @@
 package us.achromaticmetaphor.imcktg;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -50,7 +51,7 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     ((SeekBar) findViewById(R.id.WPM_input)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        ((TextView) findViewById(R.id.WPM_hint)).setText("" + wpm());
+        ((TextView) findViewById(R.id.WPM_hint)).setText("" + wpm() + " wpm");
       }
       @Override
       public void onStartTrackingTouch(SeekBar seekBar) {}
@@ -62,7 +63,7 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
 
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        ((TextView) findViewById(R.id.FREQ_hint)).setText("" + freqRescaled(20, 4410));
+        ((TextView) findViewById(R.id.FREQ_hint)).setText("" + freqRescaled(20, 4410) + "Hz / " + freqNote().toUpperCase(Locale.getDefault()) + freqOctave());
       }
       @Override
       public void onStartTrackingTouch(SeekBar seekBar) {}
@@ -180,12 +181,20 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     return new MorsePCM(freqRescaled(20, 4410), wpm());
   }
 
+  private int freqTone() {
+    return freqRescaled(0, 62);
+  }
+
+  private int freqOctave() {
+    return freqTone() / 7;
+  }
+
+  private String freqNote() {
+    return "cdefgab".substring(freqTone() % 7).substring(0, 1);
+  }
+
   private ToneGenerator imyGen() {
-    final int ftone = freqRescaled(0, 56);
-    final int octave = ftone / 7;
-    final int fnote = ftone % 7;
-    final String note = "abcdefg".substring(fnote).substring(0, 1);
-    return new MorseIMelody(octave, note, wpm());
+    return new MorseIMelody(freqOctave(), freqNote(), wpm());
   }
 
   private ToneGenerator ttsGen() {
