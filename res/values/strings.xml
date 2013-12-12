@@ -18,6 +18,6 @@
     <string name="TTSpreview">Preview</string>
     <string name="morseIMelody">Morse (iMelody)</string>
     <string name="frequency_default">800 Hz / G1</string>
-    <string name="wpm_default">20</string>
+    <string name="wpm_default">20 wpm</string>
     <string name="frequency_prompt">Pitch</string>
 </resources>
