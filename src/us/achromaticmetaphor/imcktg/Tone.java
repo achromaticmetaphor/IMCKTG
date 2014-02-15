@@ -63,23 +63,26 @@ public class Tone {
     }
   }
 
-  protected static Tone generateToneHead(Context c, String s, String ext, String typePrefix) {
+  private static File getToneFilename(Context c, String s, String ext, String typePrefix) {
     File rtdir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RINGTONES);
-    //File rtdir = c.getExternalFilesDir(Environment.DIRECTORY_RINGTONES);
     File tone = new File(rtdir, filenameTransform("us.achromaticmetaphor.imcktg:" + typePrefix + s) + ext);
     rtdir.mkdirs();
-    return new Tone(tone);
+    return tone;
   }
 
   protected static File tmpfile(File f) {
     return new File(f.getAbsolutePath() + ".tmp");
   }
 
-  protected static Tone generateTone(Context c, String s, ToneGenerator gen) throws IOException {
-    Tone tone = generateToneHead(c, s, gen.filenameExt(), gen.filenameTypePrefix());
+  protected static Tone generateTone(Context c, String s, ToneGenerator gen, File file) throws IOException {
+    Tone tone = new Tone(file);
     gen.writeTone(tone.file(), s, true);
     tone.generateToneTail(c, s);
     return tone;
+  }
+
+  protected static Tone generateTone(Context c, String s, ToneGenerator gen) throws IOException {
+    return generateTone(c, s, gen, getToneFilename(c, s, gen.filenameExt(), gen.filenameTypePrefix()));
   }
 
   protected static void tmpRename(File tone) {
