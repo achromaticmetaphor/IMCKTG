@@ -1,11 +1,14 @@
 package us.achromaticmetaphor.imcktg;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import android.os.Build;
 
 public abstract class Morse {
 
@@ -15,6 +18,8 @@ public abstract class Morse {
   public static final char pauseChar = ' ';
 
   private static void morse(String s, List<String> sb) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
+      s = Normalizer.normalize(s, Normalizer.Form.NFKD);
     s = s.toLowerCase(Locale.getDefault());
     s.replaceAll("\\s+", " ");
 
