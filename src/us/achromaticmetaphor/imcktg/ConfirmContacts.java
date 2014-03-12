@@ -178,7 +178,12 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
   }
 
   private ToneGenerator pcmGen() {
-    return new MorsePCM(freqRescaled(20, 4410), wpm());
+    return new MorsePCM(freqRescaled(20, 4410), wpm(), repeatCount());
+  }
+
+  private int repeatCount() {
+    // TODO
+    return 0;
   }
 
   private int freqTone() {
@@ -194,11 +199,11 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
   }
 
   private ToneGenerator imyGen() {
-    return new MorseIMelody(freqOctave(), freqNote(), wpm());
+    return new MorseIMelody(freqOctave(), freqNote(), wpm(), repeatCount());
   }
 
   private ToneGenerator ttsGen() {
-    return new TTS(tts, freqRescaled(), wpm() / 20.0f);
+    return new TTS(tts, freqRescaled(), wpm() / 20.0f, repeatCount());
   }
 
   public void previewMorsePCM(View view) {

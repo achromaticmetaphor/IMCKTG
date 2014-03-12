@@ -14,13 +14,15 @@ public class TTS extends ToneGenerator implements TextToSpeech.OnUtteranceComple
 
   private TextToSpeech tts;
   private Map<String, Semaphore> semas;
+  private final int repeatCount;
 
   public TTS(TextToSpeech tts) {
-    this(tts, 1.0f, 0.8f);
+    this(tts, 1.0f, 0.8f, 0);
   }
 
-  public TTS(TextToSpeech tts, float pitch, float srate) {
+  public TTS(TextToSpeech tts, float pitch, float srate, int repeatCount) {
     this.tts = tts;
+    this.repeatCount = repeatCount;
     tts.setOnUtteranceCompletedListener(this);
     tts.setPitch(pitch);
     tts.setSpeechRate(srate);
@@ -39,6 +41,8 @@ public class TTS extends ToneGenerator implements TextToSpeech.OnUtteranceComple
     Tone.tmpRename(tone);
     if (extend)
       Tone.waveAppendSilence(tone, 2);
+    if (repeatCount > 0)
+      Tone.waveRepeat(tone, repeatCount);
   }
 
   @Override
@@ -47,13 +51,13 @@ public class TTS extends ToneGenerator implements TextToSpeech.OnUtteranceComple
   }
 
   @Override
-  public void writeTone(OutputStream out, String s, boolean extend) throws IOException {
+  public void writeTone(OutputStream out, String s) throws IOException {
     throw new IllegalArgumentException("method not implemented");
   }
 
   @Override
   public String filenameTypePrefix() {
-    return "TextToSpeech:";
+    return "TextToSpeech:" + repeatCount + ":";
   }
 
   @Override

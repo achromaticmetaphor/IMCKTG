@@ -14,7 +14,7 @@ public class MorseIMelody extends ToneGenerator {
   private static final String defaultTone = "a";
 
   public static void main(String [] argV) throws IOException {
-    (new MorseIMelody()).writeIMelody((OutputStream) System.out, argV[0]);
+    (new MorseIMelody(0)).writeIMelody((OutputStream) System.out, argV[0]);
   }
 
   public void writeIMelody(OutputStream out, String s) throws IOException {
@@ -44,18 +44,23 @@ public class MorseIMelody extends ToneGenerator {
 
   private final Map<Character, String> tones;
   private final int beat;
+  private final int repeatCount;
 
-  public MorseIMelody() {
-    this(defaultWordsPerMinute);
+  public MorseIMelody(int repeatCount) {
+    this(defaultWordsPerMinute, repeatCount);
   }
 
-  public MorseIMelody(int wpm) {
-    this(defaultOctave, defaultTone, wpm);
+  public MorseIMelody(int wpm, int repeatCount) {
+    this(defaultOctave, defaultTone, wpm, repeatCount);
   }
 
-  public MorseIMelody(int octave, String tone, int wpm) {
+  public MorseIMelody(int octave, String tone, int wpm, int repeatCount) {
     if (wpm < 1 || wpm > 144)
       throw new IllegalArgumentException("invalid wpm : " + wpm);
+
+    if (repeatCount < 0)
+      throw new IllegalArgumentException("invalid repeat count : " + repeatCount);
+    this.repeatCount = repeatCount;
 
     final int duration = wpm <= 36 ? 3 : wpm <= 72 ? 4 : 5;
     // The format defines BEAT as beats per minute, at common (4/4) time.
@@ -82,8 +87,12 @@ public class MorseIMelody extends ToneGenerator {
 
   private void morseMelody(PrintStream out, Iterable<String> mcs) {
     IMelodyFormat.writeBeginMelody(out);
+    if (repeatCount > 0)
+      IMelodyFormat.beginRepeatBlock(out);
     for (String s : mcs)
       morseMelody(out, s);
+    if (repeatCount > 0)
+      IMelodyFormat.endRepeatBlock(out, repeatCount);
     IMelodyFormat.writeEndMelody(out);
   }
 
@@ -95,8 +104,8 @@ public class MorseIMelody extends ToneGenerator {
   }
 
   @Override
-  public void writeTone(OutputStream out, String s, boolean extend) throws IOException {
-    writeIMelody(out, extend ? s + Tone.morsePostPause : s);
+  public void writeTone(OutputStream out, String s) throws IOException {
+    writeIMelody(out, s);
   }
 
   @Override
@@ -106,7 +115,7 @@ public class MorseIMelody extends ToneGenerator {
 
   @Override
   public String filenameTypePrefix() {
-    return "iMelody:" + beat + ":" + tones.get(Morse.dotChar) + ":";
+    return "iMelody:" + beat + ":" + tones.get(Morse.dotChar) + ":" + repeatCount + ":";
   }
 
 }

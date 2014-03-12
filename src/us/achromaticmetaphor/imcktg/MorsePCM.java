@@ -13,6 +13,7 @@ public class MorsePCM extends ToneGenerator {
 
   private static final int defaultFrequency = 800;
   private static final int defaultWordsPerMinute = 20;
+  private static final int defaultRepeatCount = 0;
 
   public static void main(String [] argVector) throws IOException {
     (new MorsePCM()).writeWithWavHeader(System.out, argVector[0]);
@@ -25,23 +26,29 @@ public class MorsePCM extends ToneGenerator {
   private final int samplesPerPulse;
   private final int freq;
   private final int wpm;
+  private final int repeatCount;
 
   public MorsePCM() {
-    this(defaultWordsPerMinute);
+    this(defaultRepeatCount);
   }
 
-  public MorsePCM(int wpm) {
-    this(defaultFrequency, wpm);
+  public MorsePCM(int repeatCount) {
+    this(defaultWordsPerMinute, repeatCount);
   }
 
-  public MorsePCM(int freq, int wpm) {
-    this(freq, freq * 10, wpm);
+  public MorsePCM(int wpm, int repeatCount) {
+    this(defaultFrequency, wpm, repeatCount);
   }
 
-  public MorsePCM(int freq, int sampleRate, int wpm) {
+  public MorsePCM(int freq, int wpm, int repeatCount) {
+    this(freq, freq * 10, wpm, repeatCount);
+  }
+
+  public MorsePCM(int freq, int sampleRate, int wpm, int repeatCount) {
     this.sampleRate = sampleRate;
     this.freq = freq;
     this.wpm = wpm;
+    this.repeatCount = repeatCount;
 
     samplesPerPulse = secondsPerMinute * sampleRate / wpm / Morse.unitsPerWord;
 
@@ -58,7 +65,7 @@ public class MorsePCM extends ToneGenerator {
   public void writeWithWavHeader(OutputStream out, String s) throws IOException {
     MorseWriter writer = new MorseWriter(out);
     Iterable<String> mcs = Morse.morse(s);
-    writer.writeWavHeader(Morse.numPulses(mcs) * samplesPerPulse);
+    writer.writeWavHeader(Morse.numPulses(mcs) * samplesPerPulse * (repeatCount + 1));
     writer.writeMorse(mcs);
     writer.flush();
   }
@@ -66,7 +73,7 @@ public class MorsePCM extends ToneGenerator {
   public void writeWithHeaders(OutputStream out, String s) throws IOException {
     MorseWriter writer = new MorseWriter(out);
     Iterable<String> mcs = Morse.morse(s);
-    final int nsamples = Morse.numPulses(mcs) * samplesPerPulse;
+    final int nsamples = Morse.numPulses(mcs) * samplesPerPulse * (repeatCount + 1);
     writer.writeHttpHeaders(nsamples, to83(s));
     writer.writeWavHeader(nsamples);
     writer.writeMorse(mcs);
@@ -168,8 +175,9 @@ public class MorsePCM extends ToneGenerator {
     }
 
     public void writeMorse(Iterable<String> morse) throws IOException {
-      for (String s : morse)
-        writeMorseString(s);
+      for (int i = 0; i <= repeatCount; i++)
+        for (String s : morse)
+          writeMorseString(s);
     }
 
     public void flush() throws IOException {
@@ -179,8 +187,8 @@ public class MorsePCM extends ToneGenerator {
   }
 
   @Override
-  public void writeTone(OutputStream out, String s, boolean extend) throws IOException {
-    writeWithWavHeader(out, extend ? s + Tone.morsePostPause : s);
+  public void writeTone(OutputStream out, String s) throws IOException {
+    writeWithWavHeader(out, s);
   }
 
   @Override
@@ -190,7 +198,7 @@ public class MorsePCM extends ToneGenerator {
 
   @Override
   public String filenameTypePrefix() {
-    return "RIFF.WAV:" + freq + ":" + wpm + ":";
+    return "RIFF.WAV:" + freq + ":" + wpm + ":" + repeatCount + ":";
   }
 
 }

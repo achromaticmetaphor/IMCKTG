@@ -146,6 +146,48 @@ public class Tone {
     header[offset+3] = (byte) ((val >> 24) & 255);
   }
 
+  protected static void waveRepeat(File tone, int repeatCount) throws IOException {
+    if (repeatCount > 0) {
+      // TODO :: actually parse RIFF
+      File tmp = tmpfile(tone);
+      File samples = tmpfile(tmp);
+      byte [] header = new byte[44];
+      InputStream in = new BufferedInputStream(new FileInputStream(tone));
+      OutputStream out = new BufferedOutputStream(new FileOutputStream(tmp));
+      in.read(header);
+
+      final int subchunk2size = waveReadInt(header, 40);
+      final int chunksize = waveReadInt(header, 4);
+
+      waveWriteInt(header, 4, chunksize + (subchunk2size * (repeatCount-1)));
+      waveWriteInt(header, 40, subchunk2size * repeatCount);
+
+      out.write(header);
+
+      final long len = tone.length() - 44;
+      OutputStream tout = new BufferedOutputStream(new FileOutputStream(samples));
+      for (long i = 0; i < len; i++)
+        tout.write(in.read());
+
+      in.close();
+      tout.flush();
+      tout.close();
+
+      for (int i = 0; i <= repeatCount; i++) {
+        InputStream tin = new BufferedInputStream(new FileInputStream(samples));
+        for (long j = 0; j < len; j++)
+          out.write(tin.read());
+        tin.close();
+      }
+
+      out.flush();
+      out.close();
+      samples.delete();
+      tone.delete();
+      tmp.renameTo(tone);
+    }
+  }
+
   protected static void waveAppendSilence(File tone, int seconds) throws IOException {
     if (seconds > 0) {
       // TODO :: actually parse RIFF
