@@ -2,11 +2,11 @@
 <resources>
     <string name="app_name">IMCKTG</string>
     <string name="for_contacts">Generate tones for contacts</string>
-    <string name="title_activity_select_contacts">SelectContacts</string>
+    <string name="title_activity_select_contacts">Select Contacts</string>
     <string name="for_default">Generate default tone</string>
-    <string name="title_activity_default_tone_input">DefaultToneInput</string>
+    <string name="title_activity_default_tone_input">Default Tone</string>
     <string name="confirm">OK</string>
-    <string name="title_activity_confirm_contacts">ConfirmContacts</string>
+    <string name="title_activity_confirm_contacts">Select Tone Parameters</string>
     <string name="words_per_minute_prompt">Rate</string>
     <string name="def_ringtone_text_hint">Ringtone Text Here</string>
     <string name="ringtone">use for Ring</string>
