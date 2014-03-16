@@ -20,4 +20,6 @@
     <string name="frequency_default">800 Hz / G1</string>
     <string name="wpm_default">20 wpm</string>
     <string name="frequency_prompt">Pitch</string>
+    <string name="rc_default">0</string>
+    <string name="rc_prompt">Repeat Count</string>
 </resources>

@@ -182,8 +182,12 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
   }
 
   private int repeatCount() {
-    // TODO
-    return 0;
+    try {
+      return Integer.parseInt(((TextView) findViewById(R.id.RC_input)).getText().toString());
+    }
+      catch (NumberFormatException nfe) {
+        return 0;
+      }
   }
 
   private int freqTone() {
