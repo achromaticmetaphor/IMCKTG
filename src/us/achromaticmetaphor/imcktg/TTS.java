@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
@@ -31,7 +32,7 @@ public class TTS extends ToneGenerator implements TextToSpeech.OnUtteranceComple
 
   @Override
   public void writeTone(File tone, String s, boolean extend) throws IOException {
-    String uid = tone.getAbsolutePath();
+    String uid = UUID.randomUUID().toString();
     semas.put(uid, new Semaphore(0));
     HashMap<String, String> params = new HashMap<String, String>();
     params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, uid);
