@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -23,6 +24,7 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
   public static final String extrakeySelection = extrakeyprefix + ".selection";
   public static final String extrakeyTonestring = extrakeyprefix + ".tonestring";
   public static final String extrakeyFordefault = extrakeyprefix + ".forDefault";
+  public static final String extrakeyFilename = extrakeyprefix + ".filename";
 
   private int outstandingTones;
   private TextToSpeech tts;
@@ -226,7 +228,9 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     AudioManager aman = (AudioManager) getSystemService(AUDIO_SERVICE);
     MediaPlayer player;
     try {
-      Tone preview = Tone.generateTone(this, previewText, gen);
+      Intent i = new Intent();
+      i.putExtra(extrakeyFilename, Tone.tmpFilename());
+      Tone preview = Tone.generateTone(this, previewText, gen, i);
       player = MediaPlayer.create(this, preview.contentUri());
       OAFCL oafcl = new OAFCL(aman, preview);
       aman.requestAudioFocus(oafcl, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);

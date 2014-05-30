@@ -21,4 +21,8 @@ public class GaAT extends Activity {
     startActivity(new Intent(this, DefaultToneInput.class));
   }
 
+  public void inputToFile(View view) {
+    startActivity(new Intent(this, ChooseFilename.class));
+  }
+
 }

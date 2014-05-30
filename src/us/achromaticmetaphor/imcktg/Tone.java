@@ -63,9 +63,22 @@ public class Tone {
     }
   }
 
-  private static File getToneFilename(Context c, String s, String ext, String typePrefix) {
-    File rtdir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RINGTONES);
-    File tone = new File(rtdir, filenameTransform("us.achromaticmetaphor.imcktg:" + typePrefix + s) + ext);
+  protected static String tmpFilename() {
+    return filenameTransform("us.achromaticmetaphor.imcktg.preview");
+  }
+
+  private static File getToneFilename(Context c, String s, String ext, String typePrefix, Intent i) {
+    String userFilename = i.getStringExtra(ConfirmContacts.extrakeyFilename);
+    File rtdir;
+    File tone;
+    if (userFilename == null) {
+      rtdir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RINGTONES);
+      tone = new File(rtdir, filenameTransform("us.achromaticmetaphor.imcktg:" + typePrefix + s) + ext);
+    }
+    else {
+      rtdir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "IMCKTG");
+      tone = new File(rtdir, userFilename + ext);
+    }
     rtdir.mkdirs();
     return tone;
   }
@@ -81,8 +94,8 @@ public class Tone {
     return tone;
   }
 
-  protected static Tone generateTone(Context c, String s, ToneGenerator gen) throws IOException {
-    return generateTone(c, s, gen, getToneFilename(c, s, gen.filenameExt(), gen.filenameTypePrefix()));
+  protected static Tone generateTone(Context c, String s, ToneGenerator gen, Intent i) throws IOException {
+    return generateTone(c, s, gen, getToneFilename(c, s, gen.filenameExt(), gen.filenameTypePrefix(), i));
   }
 
   protected static void tmpRename(File tone) {

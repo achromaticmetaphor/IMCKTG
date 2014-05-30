@@ -33,7 +33,7 @@ public class AsyncGenerateMorseTones extends AsyncTask<AsyncGenerateMorseTones.P
 
     public Tone gentone() {
       try {
-        Tone tone = Tone.generateTone(c, s, gen);
+        Tone tone = Tone.generateTone(c, s, gen, i);
         if (contacturi != null)
           tone.assign(c, contacturi);
         else

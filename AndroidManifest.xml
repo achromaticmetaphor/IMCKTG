@@ -36,6 +36,10 @@
             android:label="@string/title_activity_default_tone_input" >
         </activity>
         <activity
+            android:name="us.achromaticmetaphor.imcktg.ChooseFilename"
+            android:label="@string/title_activity_choose_filename" >
+        </activity>
+        <activity
             android:name="us.achromaticmetaphor.imcktg.ConfirmContacts"
             android:label="@string/title_activity_confirm_contacts" >
         </activity>
