@@ -89,6 +89,14 @@
         android:inputType="number"
         android:text="@string/rc_default" />
 
+    <Spinner
+        android:id="@+id/format_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/RC_prompt"
+        android:layout_below="@+id/RC_input"
+        android:entries="@array/formats" />
+
     <Button
         android:id="@+id/WPM_confirm_MorsePCM"
         style="?android:attr/buttonStyleSmall"
@@ -96,9 +104,9 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/WPM_input"
         android:layout_marginTop="20dp"
-        android:layout_below="@+id/RC_input"
-        android:text="@string/morsePCM"
-        android:onClick="generateAndAssignTonesMorsePCM" />
+        android:layout_below="@id/format_spinner"
+        android:text="@string/toneGenerate"
+        android:onClick="generateAndAssignTones" />
 
     <Button
         android:id="@+id/WPM_preview_MorsePCM"
@@ -108,51 +116,7 @@
         android:layout_alignBaseline="@id/WPM_confirm_MorsePCM"
         android:layout_alignRight="@+id/WPM_input"
         android:layout_marginTop="20dp"
-        android:text="@string/morsePCMpreview"
-        android:onClick="previewMorsePCM" />
-
-    <Button
-        android:id="@+id/WPM_confirm_MorseIMelody"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/WPM_input"
-        android:layout_below="@+id/WPM_confirm_MorsePCM"
-        android:layout_marginTop="20dp"
-        android:text="@string/morseIMelody"
-        android:onClick="generateAndAssignTonesMorseIMelody" />
-
-    <Button
-        android:id="@+id/WPM_preview_MorseIMelody"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/WPM_confirm_MorseIMelody"
-        android:layout_alignRight="@+id/WPM_input"
-        android:layout_marginTop="20dp"
-        android:text="@string/morseIMelodypreview"
-        android:onClick="previewMorseIMelody" />
-
-    <Button
-        android:id="@+id/WPM_confirm_TTS"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/WPM_input"
-        android:layout_below="@+id/WPM_confirm_MorseIMelody"
-        android:layout_marginTop="20dp"
-        android:text="@string/tts"
-        android:onClick="generateAndAssignTonesTTS" />
-
-    <Button
-        android:id="@+id/WPM_preview_TTS"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/WPM_confirm_TTS"
-        android:layout_alignRight="@+id/WPM_input"
-        android:layout_marginTop="20dp"
-        android:text="@string/TTSpreview"
-        android:onClick="previewTTS" />
+        android:text="@string/tonePreview"
+        android:onClick="previewTone" />
 
 </RelativeLayout>

@@ -11,12 +11,8 @@
     <string name="def_ringtone_text_hint">Ringtone Text Here</string>
     <string name="ringtone">use for Ring</string>
     <string name="notification_tone">use for Notification</string>
-    <string name="tts">Speech</string>
-    <string name="morsePCM">Morse (PCM)</string>
-    <string name="morsePCMpreview">Preview</string>
-    <string name="morseIMelodypreview">Preview</string>
-    <string name="TTSpreview">Preview</string>
-    <string name="morseIMelody">Morse (iMelody)</string>
+    <string name="toneGenerate">Generate</string>
+    <string name="tonePreview">Preview</string>
     <string name="frequency_default">800 Hz / G1</string>
     <string name="wpm_default">20 wpm</string>
     <string name="frequency_prompt">Pitch</string>
@@ -25,4 +21,9 @@
     <string name="filename_text_hint">Filename Here</string>
     <string name="for_tofile">Generate tone to file</string>
     <string name="title_activity_choose_filename">Choose Filename</string>
+    <string-array name="formats">
+      <item>Morse (WAV)</item>
+      <item>Morse (iMelody)</item>
+      <item>Speech</item>
+    </string-array>
 </resources>

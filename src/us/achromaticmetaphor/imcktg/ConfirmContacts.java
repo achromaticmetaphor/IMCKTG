@@ -2,6 +2,7 @@ package us.achromaticmetaphor.imcktg;
 
 import java.io.IOException;
 import java.util.Locale;
+import java.util.concurrent.Semaphore;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -16,6 +17,7 @@ import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class ConfirmContacts extends Activity implements TextToSpeech.OnInitListener {
@@ -36,8 +38,6 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_confirm_contacts);
 
-    findViewById(R.id.WPM_preview_TTS).setEnabled(false);
-    findViewById(R.id.WPM_confirm_TTS).setEnabled(false);
     tts = new TextToSpeech(this, this);
 
     if (getIntent().getBooleanExtra(extrakeyFordefault, false))
@@ -111,6 +111,10 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     return cursor.getString(0);
   }
 
+  public void generateAndAssignTones(View view) {
+    generateAndAssignTones(spinnerGen());
+  }
+
   public void generateAndAssignTones(ToneGenerator gen) {
     pdia = ProgressDialog.show(this, "Generating", "Please wait", true, false);
     if (getIntent().getBooleanExtra(extrakeyFordefault, false)) {
@@ -132,16 +136,9 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     checkDone();
   }
 
-  public void generateAndAssignTonesMorsePCM(View view) {
-    generateAndAssignTones(pcmGen());
-  }
-
-  public void generateAndAssignTonesMorseIMelody(View view) {
-    generateAndAssignTones(imyGen());
-  }
-
-  public void generateAndAssignTonesTTS(View view) {
-    generateAndAssignTones(ttsGen());
+  public ToneGenerator spinnerGen() {
+    String sel = (String) ((Spinner) findViewById(R.id.format_spinner)).getSelectedItem();
+    return sel.equals("Morse (WAV)") ? pcmGen() : sel.equals("Morse (iMelody)") ? imyGen() : ttsGen();
   }
 
   private class OAFCL implements AudioManager.OnAudioFocusChangeListener, MediaPlayer.OnCompletionListener {
@@ -212,16 +209,8 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     return new TTS(tts, freqRescaled(), wpm() / 20.0f, repeatCount());
   }
 
-  public void previewMorsePCM(View view) {
-    previewTone(pcmGen());
-  }
-
-  public void previewMorseIMelody(View view) {
-    previewTone(imyGen());
-  }
-
-  public void previewTTS(View view) {
-    previewTone(ttsGen());
+  public void previewTone(View view) {
+    previewTone(spinnerGen());
   }
 
   public void previewTone(ToneGenerator gen) {
@@ -247,8 +236,6 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
   }
 
   private void enableTTS() {
-    findViewById(R.id.WPM_confirm_TTS).setEnabled(true);
-    findViewById(R.id.WPM_preview_TTS).setEnabled(true);
   }
 
 }
