@@ -43,6 +43,9 @@
             android:name="us.achromaticmetaphor.imcktg.ConfirmContacts"
             android:label="@string/title_activity_confirm_contacts" >
         </activity>
+        <activity
+            android:name="us.achromaticmetaphor.imcktg.About"
+            android:label="@string/title_activity_about" />
     </application>
 
 </manifest>
