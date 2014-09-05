@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 public class GaAT extends Activity {
 
@@ -14,19 +17,16 @@ public class GaAT extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_ga_at);
-  }
-
-  public void chooseContacts(View view) {
-    startActivity(new Intent(this, SelectContacts.class));
-  }
-
-  public void inputDefaultString(View view) {
-    startActivity(new Intent(this, DefaultToneInput.class));
-  }
-
-  public void inputToFile(View view) {
-    startActivity(new Intent(this, ChooseFilename.class));
+    setContentView(R.layout.list_layout);
+    String [] choices = new String [] {getString(R.string.for_contacts), getString(R.string.for_default), getString(R.string.for_tofile)};
+    final Class<?> [] activities = new Class [] {SelectContacts.class, DefaultToneInput.class, ChooseFilename.class};
+    ListView lview = (ListView) findViewById(R.id.cmdlist);
+    lview.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, choices));
+    lview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
+        startActivity(new Intent(GaAT.this, activities[pos]));
+      }
+    });
   }
 
   @Override
