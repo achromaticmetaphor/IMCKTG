@@ -3,6 +3,7 @@ package us.achromaticmetaphor.imcktg;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.SparseBooleanArray;
@@ -51,12 +52,25 @@ public class SelectContacts extends ListActivity {
       lv.setItemChecked(i, b);
   }
 
+  private static MenuItem addMenuItem(Menu menu, String title) {
+    MenuItem mi = menu.add(title);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+      mi.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    return mi;
+  }
+
+  private static MenuItem addMenuItem(Menu menu, String title, int ic) {
+    MenuItem mi = addMenuItem(menu, title);
+    mi.setIcon(ic);
+    return mi;
+  }
+
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
-    menu.add(menuSelectAll);
-    menu.add(menuInvertSelection);
-    menu.add(menuSelectNone);
+    addMenuItem(menu, menuSelectAll, R.drawable.ic_action_select_all);
+    addMenuItem(menu, menuSelectNone, R.drawable.ic_action_select_none);
+    addMenuItem(menu, menuInvertSelection, R.drawable.ic_action_invert_selection);
     return true;
   }
 

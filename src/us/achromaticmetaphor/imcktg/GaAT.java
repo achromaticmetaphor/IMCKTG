@@ -2,6 +2,7 @@ package us.achromaticmetaphor.imcktg;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,7 +33,10 @@ public class GaAT extends Activity {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
-    menu.add(menuAbout);
+    MenuItem about = menu.add(menuAbout);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+      about.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    about.setIcon(R.drawable.ic_action_about);
     return true;
   }
 
