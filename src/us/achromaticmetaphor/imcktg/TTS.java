@@ -40,10 +40,12 @@ public class TTS extends ToneGenerator implements TextToSpeech.OnUtteranceComple
     semas.get(uid).acquireUninterruptibly();
     semas.remove(uid);
     Tone.tmpRename(tone);
+    WAVETone wavetone = new WAVETone(tone);
     if (extend)
-      Tone.waveAppendSilence(tone, 2);
+      wavetone.appendSilence(2);
     if (repeatCount > 0)
-      Tone.waveRepeat(tone, repeatCount);
+      wavetone.repeat(repeatCount);
+    wavetone.close();
   }
 
   @Override
