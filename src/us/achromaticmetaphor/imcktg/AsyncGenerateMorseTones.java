@@ -9,8 +9,8 @@ import android.os.AsyncTask;
 
 public class AsyncGenerateMorseTones extends AsyncTask<AsyncGenerateMorseTones.Params, Void, Tone []> {
 
-  public interface Listener {
-    public abstract void onFinished(Tone tone);
+  public static interface Listener {
+    public abstract void onFinished(boolean succeeded);
   }
 
   public static class Params {
@@ -59,7 +59,7 @@ public class AsyncGenerateMorseTones extends AsyncTask<AsyncGenerateMorseTones.P
   @Override
   protected void onPostExecute(Tone [] tones) {
     for (int i = 0; i < tones.length; i++)
-      params[i].l.onFinished(tones[i]);
+      params[i].l.onFinished(tones[i] != null);
   }
 
 }

@@ -1,11 +1,14 @@
 package us.achromaticmetaphor.imcktg;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.concurrent.Semaphore;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.AudioManager;
@@ -32,6 +35,7 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
   private TextToSpeech tts;
   private String previewText;
   private ProgressDialog pdia;
+  private LinkedList<String> failedTones;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -81,22 +85,48 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
   }
 
   private class Listener implements AsyncGenerateMorseTones.Listener {
+
+    String name;
+
+    public Listener(String name) {
+      this.name = name;
+    }
+
     @Override
-    public void onFinished(Tone tone) {
-      ConfirmContacts.this.decrementOutstandingTones();
+    public void onFinished(boolean succeeded) {
+      if (! succeeded)
+        addFailedTone(name);
+      decrementOutstandingTones();
     }
   }
 
   private void checkDone() {
     if (outstandingTones <= 0) {
       pdia.dismiss();
-      finish();
+      if (failedTones.size() > 0) {
+        StringBuilder sb = new StringBuilder("Some ringtones could not be generated:\n");
+        for (String name : failedTones)
+          sb.append("  ").append(name).append("\n");
+        new AlertDialog.Builder(this)
+          .setMessage(sb.toString())
+          .setTitle("Something untoward has occurred.")
+          .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface di, int b) {
+              finish(); }})
+          .show();
+      }
+      else
+        finish();
     }
   }
 
   public synchronized void decrementOutstandingTones() {
     outstandingTones--;
     checkDone();
+  }
+
+  private synchronized void addFailedTone(String name) {
+    failedTones.add(name);
   }
 
   private Uri contactUriForID(long id) {
@@ -117,11 +147,12 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
 
   public void generateAndAssignTones(ToneGenerator gen) {
     pdia = ProgressDialog.show(this, "Generating", "Please wait", true, false);
+    failedTones = new LinkedList<String>();
     if (getIntent().getBooleanExtra(extrakeyFordefault, false)) {
       final String tonestring = getIntent().getStringExtra(extrakeyTonestring);
       outstandingTones = 1;
       final AsyncGenerateMorseTones async = new AsyncGenerateMorseTones();
-      async.execute(new AsyncGenerateMorseTones.Params(new Listener(), this, tonestring, gen, null, getIntent()));
+      async.execute(new AsyncGenerateMorseTones.Params(new Listener("default tone"), this, tonestring, gen, null, getIntent()));
     }
     else {
       final long [] selection = getIntent().getLongArrayExtra(extrakeySelection);
@@ -130,7 +161,7 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
         final Uri contacturi = contactUriForID(id);
         final String name = nameForContact(contacturi);
         final AsyncGenerateMorseTones async = new AsyncGenerateMorseTones();
-        async.execute(new AsyncGenerateMorseTones.Params(new Listener(), this, name, gen, contacturi, getIntent()));
+        async.execute(new AsyncGenerateMorseTones.Params(new Listener(name), this, name, gen, contacturi, getIntent()));
       }
     }
     checkDone();
