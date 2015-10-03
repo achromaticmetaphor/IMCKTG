@@ -106,8 +106,8 @@ public class WAVETone {
   public void repeat(int count) throws IOException {
     int dataSize = dataSize();
     MappedByteBuffer samples = channel.map(FileChannel.MapMode.READ_ONLY, dataOffset + 8, dataSize);
-    MappedByteBuffer extended = extendData(dataSize * (count - 1));
-    for (int i = 0; i < count - 1; i++) {
+    MappedByteBuffer extended = extendData(dataSize * count);
+    for (int i = 0; i < count; i++) {
       samples.rewind();
       extended.put(samples);
     }
