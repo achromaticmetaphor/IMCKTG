@@ -93,13 +93,13 @@ public class WAVETone {
     return channel.map(FileChannel.MapMode.READ_WRITE, dataSize + dataOffset + 8, bytes);
   }
 
-  public void appendSilence(int seconds) throws IOException {
-    MappedByteBuffer extended = extendData(seconds * samplesPerSecond * silentSample.capacity());
-    for (int i = 0; i < seconds; i++)
-      for (int j = 0; j < samplesPerSecond; j++) {
-        silentSample.rewind();
-        extended.put(silentSample);
-      }
+  public void appendSilence(int milliseconds) throws IOException {
+    int outsamples = milliseconds * samplesPerSecond / 1000;
+    MappedByteBuffer extended = extendData(outsamples * silentSample.capacity());
+    for (int i = 0; i < outsamples; i++) {
+      silentSample.rewind();
+      extended.put(silentSample);
+    }
     extended.force();
   }
 

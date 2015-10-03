@@ -16,6 +16,7 @@ public class TTS extends ToneGenerator implements TextToSpeech.OnUtteranceComple
   private TextToSpeech tts;
   private Map<String, Semaphore> semas;
   private final int repeatCount;
+  private final float srate;
 
   public TTS(TextToSpeech tts) {
     this(tts, 1.0f, 0.8f, 0);
@@ -28,6 +29,7 @@ public class TTS extends ToneGenerator implements TextToSpeech.OnUtteranceComple
     tts.setPitch(pitch);
     tts.setSpeechRate(srate);
     semas = new ConcurrentHashMap<String, Semaphore>();
+    this.srate = srate;
   }
 
   @Override
@@ -42,7 +44,7 @@ public class TTS extends ToneGenerator implements TextToSpeech.OnUtteranceComple
     Tone.tmpRename(tone);
     WAVETone wavetone = new WAVETone(tone);
     if (extend)
-      wavetone.appendSilence(2);
+      wavetone.appendSilence((int) (2000 / srate));
     if (repeatCount > 0)
       wavetone.repeat(repeatCount);
     wavetone.close();
