@@ -46,6 +46,9 @@
         <activity
             android:name="us.achromaticmetaphor.imcktg.About"
             android:label="@string/title_activity_about" />
+        <activity
+            android:name="us.achromaticmetaphor.imcktg.AboutText"
+            android:label="@string/title_activity_about" />
     </application>
 
 </manifest>

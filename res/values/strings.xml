@@ -22,7 +22,7 @@
     <string name="for_tofile">Generate tone to file</string>
     <string name="title_activity_choose_filename">Choose Filename</string>
     <string name="title_activity_about">About</string>
-    <string name="about_text">
+    <string name="about_code">
 Copyright (c) 2013, 2014, 2015 Charles Cagle
 \n\n
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -42,7 +42,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-\n\n
+    </string>
+    <string name="about_icons">
 Some icons are reproduced from work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.
 \n\n
 Some icons are modifications based on work created and shared by the Android Open Source Project and used according to terms described in the Creative Commons 2.5 Attribution License.
