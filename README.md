@@ -14,7 +14,6 @@ Building Android Binaries
 -------------------------
 To build IMCKTG from source using an Android SDK, execute:
 
-    android update project -p . -n IMCKTG
-    ant debug
+    ./gradlew build
 
-This will produce bin/IMCKTG-debug.apk.
+This will produce build/outputs/apk/IMCKTG-debug.apk.
