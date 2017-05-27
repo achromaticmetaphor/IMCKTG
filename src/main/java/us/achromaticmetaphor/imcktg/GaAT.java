@@ -19,8 +19,8 @@ public class GaAT extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.list_layout);
-    String [] choices = new String [] {getString(R.string.for_contacts), getString(R.string.for_default), getString(R.string.for_tofile)};
-    final Class<?> [] activities = new Class [] {SelectContacts.class, DefaultToneInput.class, ChooseFilename.class};
+    String[] choices = new String[] {getString(R.string.for_contacts), getString(R.string.for_default), getString(R.string.for_tofile)};
+    final Class<?>[] activities = new Class[] {SelectContacts.class, DefaultToneInput.class, ChooseFilename.class};
     ListView lview = (ListView) findViewById(R.id.cmdlist);
     lview.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, choices));
     lview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -47,5 +47,4 @@ public class GaAT extends Activity {
       startActivity(new Intent(this, About.class));
     return true;
   }
-
 }

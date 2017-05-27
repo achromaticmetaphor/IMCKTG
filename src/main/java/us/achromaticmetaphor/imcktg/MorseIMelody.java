@@ -13,7 +13,7 @@ public class MorseIMelody extends ToneGenerator {
   private static final int defaultOctave = IMelodyFormat.defaultOctave;
   private static final String defaultTone = "a";
 
-  public static void main(String [] argV) throws IOException {
+  public static void main(String[] argV) throws IOException {
     (new MorseIMelody(0)).writeIMelody((OutputStream) System.out, argV[0]);
   }
 
@@ -117,5 +117,4 @@ public class MorseIMelody extends ToneGenerator {
   public String filenameTypePrefix() {
     return "iMelody:" + beat + ":" + tones.get(Morse.dotChar) + ":" + repeatCount + ":";
   }
-
 }

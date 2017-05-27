@@ -1,0 +1,14 @@
+BasedOnStyle: LLVM
+ColumnLimit: 0
+SpaceAfterCStyleCast: true
+
+---
+Language: Cpp
+BreakBeforeBraces: GNU
+IndentCaseLabels: true
+PointerAlignment: Middle
+Standard: Cpp11
+
+---
+Language: Java
+BreakBeforeBraces: Attach

@@ -26,5 +26,4 @@ public class DefaultToneInput extends Activity {
     startActivity(intent);
     finish();
   }
-
 }

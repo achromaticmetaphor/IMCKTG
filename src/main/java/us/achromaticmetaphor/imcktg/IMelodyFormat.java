@@ -29,7 +29,7 @@ public abstract class IMelodyFormat {
   public static String note(int octave, String tone) {
     if (octave < octaveMin || octave > octaveMax)
       throw new IllegalArgumentException("invalid octave: " + octave);
-    if (! isValidNote(tone))
+    if (!isValidNote(tone))
       throw new IllegalArgumentException("invalid tone: " + tone);
 
     return (octave == defaultOctave ? "" : octavePrefix + octave) + tone;
@@ -66,7 +66,7 @@ public abstract class IMelodyFormat {
   }
 
   public static void writeStyleHeader(PrintStream out, String style) {
-    if (! validStyles.contains(style))
+    if (!validStyles.contains(style))
       throw new IllegalArgumentException("invalid style: " + style);
     writeHeader(out, "STYLE", style);
   }
@@ -102,15 +102,15 @@ public abstract class IMelodyFormat {
 
   static {
     Set<String> s = new HashSet<String>();
-    for (char note : new char [] {'a', 'b', 'c', 'd', 'e', 'f', 'g'})
-      for (String prefix : new String [] {"", "#", "&"})
+    for (char note : new char[] {'a', 'b', 'c', 'd', 'e', 'f', 'g'})
+      for (String prefix : new String[] {"", "#", "&"})
         s.add(prefix + note);
     validNotes = Collections.unmodifiableSet(s);
   }
 
   static {
     Set<String> s = new HashSet<String>();
-    for (char style : new char [] {'0', '1', '2'})
+    for (char style : new char[] {'0', '1', '2'})
       s.add("S" + style);
     validStyles = Collections.unmodifiableSet(s);
   }
@@ -124,5 +124,4 @@ public abstract class IMelodyFormat {
       throw new IllegalArgumentException("invalid repeat count: " + repeatCount);
     out.print("@" + repeatCount + ")");
   }
-
 }

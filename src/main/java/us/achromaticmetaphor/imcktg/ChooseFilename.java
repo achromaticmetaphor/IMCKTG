@@ -25,5 +25,4 @@ public class ChooseFilename extends Activity {
     startActivity(intent);
     finish();
   }
-
 }

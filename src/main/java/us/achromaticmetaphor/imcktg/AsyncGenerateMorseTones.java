@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 
-public class AsyncGenerateMorseTones extends AsyncTask<AsyncGenerateMorseTones.Params, Void, Tone []> {
+public class AsyncGenerateMorseTones extends AsyncTask<AsyncGenerateMorseTones.Params, Void, Tone[]> {
 
   public static interface Listener {
     public abstract void onFinished(boolean succeeded);
@@ -45,21 +45,20 @@ public class AsyncGenerateMorseTones extends AsyncTask<AsyncGenerateMorseTones.P
     }
   }
 
-  private Params [] params;
+  private Params[] params;
 
   @Override
-  protected Tone [] doInBackground(Params... params) {
+  protected Tone[] doInBackground(Params... params) {
     this.params = params;
-    Tone [] tones = new Tone [params.length];
+    Tone[] tones = new Tone[params.length];
     for (int i = 0; i < params.length; i++)
       tones[i] = params[i].gentone();
     return tones;
   }
 
   @Override
-  protected void onPostExecute(Tone [] tones) {
+  protected void onPostExecute(Tone[] tones) {
     for (int i = 0; i < tones.length; i++)
       params[i].l.onFinished(tones[i] != null);
   }
-
 }

@@ -47,7 +47,7 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     if (getIntent().getBooleanExtra(extrakeyFordefault, false))
       previewText = getIntent().getStringExtra(extrakeyTonestring);
     else {
-      long [] selection = getIntent().getLongArrayExtra(extrakeySelection);
+      long[] selection = getIntent().getLongArrayExtra(extrakeySelection);
       if (selection.length == 0)
         previewText = "preview";
       else
@@ -94,7 +94,7 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
 
     @Override
     public void onFinished(boolean succeeded) {
-      if (! succeeded)
+      if (!succeeded)
         addFailedTone(name);
       decrementOutstandingTones();
     }
@@ -108,14 +108,13 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
         for (String name : failedTones)
           sb.append("  ").append(name).append("\n");
         new AlertDialog.Builder(this)
-          .setMessage(sb.toString())
-          .setTitle("Something untoward has occurred.")
-          .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            .setMessage(sb.toString())
+            .setTitle("Something untoward has occurred.")
+            .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface di, int b) {
-              finish(); }})
-          .show();
-      }
-      else
+              finish(); } })
+            .show();
+      } else
         finish();
     }
   }
@@ -130,13 +129,13 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
   }
 
   private Uri contactUriForID(long id) {
-    return Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI,  "" + id);
+    return Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, "" + id);
   }
 
   private String nameForContact(Uri contacturi) {
     Cursor cursor = getContentResolver().query(contacturi,
-                new String [] {ContactsContract.Contacts.DISPLAY_NAME},
-                null, null, null);
+                                               new String[] {ContactsContract.Contacts.DISPLAY_NAME},
+                                               null, null, null);
     cursor.moveToNext();
     return cursor.getString(0);
   }
@@ -153,9 +152,8 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
       outstandingTones = 1;
       final AsyncGenerateMorseTones async = new AsyncGenerateMorseTones();
       async.execute(new AsyncGenerateMorseTones.Params(new Listener("default tone"), this, tonestring, gen, null, getIntent()));
-    }
-    else {
-      final long [] selection = getIntent().getLongArrayExtra(extrakeySelection);
+    } else {
+      final long[] selection = getIntent().getLongArrayExtra(extrakeySelection);
       outstandingTones = selection.length;
       for (long id : selection) {
         final Uri contacturi = contactUriForID(id);
@@ -214,10 +212,9 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
   private int repeatCount() {
     try {
       return Integer.parseInt(((TextView) findViewById(R.id.RC_input)).getText().toString());
+    } catch (NumberFormatException nfe) {
+      return 0;
     }
-      catch (NumberFormatException nfe) {
-        return 0;
-      }
   }
 
   private int freqTone() {
@@ -268,5 +265,4 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
 
   private void enableTTS() {
   }
-
 }

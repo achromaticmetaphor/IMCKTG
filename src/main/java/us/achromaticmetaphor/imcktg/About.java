@@ -16,7 +16,7 @@ public class About extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_listview);
-    final String [] cmds = new String [] {"About app", "About icons"};
+    final String[] cmds = new String[] {"About app", "About icons"};
     final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, cmds);
     ListView listView = (ListView) findViewById(R.id.cmdlist);
     listView.setAdapter(adapter);
@@ -28,5 +28,4 @@ public class About extends Activity {
       }
     });
   }
-
 }

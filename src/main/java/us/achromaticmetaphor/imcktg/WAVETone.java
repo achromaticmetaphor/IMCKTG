@@ -33,7 +33,7 @@ public class WAVETone {
 
       int fmtOffset = -1;
 
-      for (int offset = 12; offset < mapped.capacity(); ) {
+      for (int offset = 12; offset < mapped.capacity();) {
         int chunkId = mapped.getInt(offset);
         if (chunkId == FOURCC_FMT)
           fmtOffset = offset;
@@ -62,10 +62,9 @@ public class WAVETone {
       byte silentByte = (byte) (bitsPerSample < 9 ? (1 << (bitsPerSample - 1)) - 1 : 0);
       for (int i = 0; i < bytesPerSample; i++)
         silentSample.put(silentByte);
+    } catch (IndexOutOfBoundsException ioobe) {
+      throw new IllegalArgumentException("invalid WAVE", ioobe);
     }
-      catch (IndexOutOfBoundsException ioobe) {
-        throw new IllegalArgumentException("invalid WAVE", ioobe);
-      }
 
     head = channel.map(FileChannel.MapMode.READ_WRITE, 0, dataOffset + 8);
     head.order(ByteOrder.LITTLE_ENDIAN);
@@ -117,5 +116,4 @@ public class WAVETone {
   public void close() throws IOException {
     channel.close();
   }
-
 }

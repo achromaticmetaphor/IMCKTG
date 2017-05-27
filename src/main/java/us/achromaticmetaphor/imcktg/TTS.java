@@ -69,5 +69,4 @@ public class TTS extends ToneGenerator implements TextToSpeech.OnUtteranceComple
   public void onUtteranceCompleted(String uid) {
     semas.get(uid).release();
   }
-
 }

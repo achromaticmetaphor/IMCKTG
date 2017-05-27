@@ -43,9 +43,9 @@ public class Tone {
   }
 
   protected static final String morsePostPause = "        ";
-  private static final char [] hexdig = "0123456789ABCDEF".toCharArray();
+  private static final char[] hexdig = "0123456789ABCDEF".toCharArray();
 
-  private static String hexPP(byte [] bytes) {
+  private static String hexPP(byte[] bytes) {
     StringBuilder sb = new StringBuilder();
     for (byte b : bytes) {
       sb.append(hexdig[b & 0xf]);
@@ -74,8 +74,7 @@ public class Tone {
     if (userFilename == null) {
       rtdir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_RINGTONES);
       tone = new File(rtdir, filenameTransform("us.achromaticmetaphor.imcktg:" + typePrefix + s) + ext);
-    }
-    else {
+    } else {
       rtdir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "IMCKTG");
       tone = new File(rtdir, userFilename + ext);
     }
@@ -104,7 +103,7 @@ public class Tone {
 
   protected void expunge(Context c) {
     c.getContentResolver().delete(toneStoreUri(c), MediaStore.Audio.Media.DATA + " = ?",
-                new String [] {file().getAbsolutePath()});
+                                  new String[] {file().getAbsolutePath()});
   }
 
   protected void delete(Context c) {
@@ -141,6 +140,5 @@ public class Tone {
       RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_NOTIFICATION, contentUri());
     if (intent.getBooleanExtra(extrakeyAlarm, false))
       RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_ALARM, contentUri());
-
   }
 }

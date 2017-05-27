@@ -42,7 +42,7 @@ public class SelectContacts extends ListActivity {
     final int count = lv.getCount();
     final SparseBooleanArray selected = lv.getCheckedItemPositions();
     for (int i = 0; i < count; i++)
-      lv.setItemChecked(i, ! selected.get(i));
+      lv.setItemChecked(i, !selected.get(i));
   }
 
   private void selectAll(boolean b) {
@@ -87,11 +87,10 @@ public class SelectContacts extends ListActivity {
   }
 
   public void confirmContacts(View view) {
-    long [] selection = getListView().getCheckedItemIds();
+    long[] selection = getListView().getCheckedItemIds();
     Intent intent = new Intent(this, ConfirmContacts.class);
     intent.putExtra(ConfirmContacts.extrakeySelection, selection);
     startActivity(intent);
     finish();
   }
-
 }

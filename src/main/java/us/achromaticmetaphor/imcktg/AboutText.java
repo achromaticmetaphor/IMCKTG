@@ -15,5 +15,4 @@ public class AboutText extends Activity {
     tv.setMovementMethod(new ScrollingMovementMethod());
     tv.setText(getIntent().getIntExtra("about_text", 0));
   }
-
 }
