@@ -1,10 +1,8 @@
 package us.achromaticmetaphor.imcktg;
 
 import android.app.ListActivity;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -13,16 +11,19 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+
+@EActivity(R.layout.activity_select_contacts)
 public class SelectContacts extends ListActivity {
 
-  private final String menuSelectAll = "Select all";
-  private final String menuSelectNone = "Select none";
-  private final String menuInvertSelection = "Invert selection";
+  private static final String menuSelectAll = "Select all";
+  private static final String menuSelectNone = "Select none";
+  private static final String menuInvertSelection = "Invert selection";
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_select_contacts);
+  @AfterViews
+  protected void load() {
     Cursor cursor = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,
                                                new String[] {ContactsContract.Contacts._ID,
                                                              ContactsContract.Contacts.DISPLAY_NAME,
@@ -86,11 +87,11 @@ public class SelectContacts extends ListActivity {
     return true;
   }
 
-  public void confirmContacts(View view) {
-    long[] selection = getListView().getCheckedItemIds();
-    Intent intent = new Intent(this, ConfirmContacts.class);
-    intent.putExtra(ConfirmContacts.extrakeySelection, selection);
-    startActivity(intent);
+  @Click
+  public void confirm() {
+    ConfirmContacts_.intent(this)
+      .selection(getListView().getCheckedItemIds())
+      .start();
     finish();
   }
 }

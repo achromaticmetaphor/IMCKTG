@@ -33,19 +33,18 @@
                 android:id="@+id/notification_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/default_tone_confirm"
+                android:layout_above="@+id/confirm"
                 android:layout_marginTop="5dp"
                 android:text="@string/notification_tone" />
 
             <Button
-                android:id="@+id/default_tone_confirm"
+                android:id="@+id/confirm"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="20dp"
-                android:onClick="confirm"
                 android:text="@string/confirm" />
 
 </RelativeLayout>

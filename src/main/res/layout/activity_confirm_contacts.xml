@@ -98,25 +98,23 @@
         android:entries="@array/formats" />
 
     <Button
-        android:id="@+id/WPM_confirm_MorsePCM"
+        android:id="@+id/generate"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/WPM_input"
         android:layout_marginTop="20dp"
         android:layout_below="@id/format_spinner"
-        android:text="@string/toneGenerate"
-        android:onClick="generateAndAssignTones" />
+        android:text="@string/toneGenerate" />
 
     <Button
-        android:id="@+id/WPM_preview_MorsePCM"
+        android:id="@+id/preview"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/WPM_confirm_MorsePCM"
+        android:layout_alignBaseline="@id/generate"
         android:layout_alignRight="@+id/WPM_input"
         android:layout_marginTop="20dp"
-        android:text="@string/tonePreview"
-        android:onClick="previewTone" />
+        android:text="@string/tonePreview" />
 
 </RelativeLayout>

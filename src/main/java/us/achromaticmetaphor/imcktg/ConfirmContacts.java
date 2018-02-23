@@ -1,79 +1,79 @@
 package us.achromaticmetaphor.imcktg;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.Locale;
-import java.util.concurrent.Semaphore;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.speech.tts.TextToSpeech;
 import android.view.View;
-import android.widget.ProgressBar;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
+
+@EActivity(R.layout.activity_confirm_contacts)
 public class ConfirmContacts extends Activity implements TextToSpeech.OnInitListener {
 
-  private static final String extrakeyprefix = "us.achromaticmetaphor.imcktg.ConfirmContacts";
-  public static final String extrakeySelection = extrakeyprefix + ".selection";
-  public static final String extrakeyTonestring = extrakeyprefix + ".tonestring";
-  public static final String extrakeyFordefault = extrakeyprefix + ".forDefault";
-  public static final String extrakeyFilename = extrakeyprefix + ".filename";
-
-  private int outstandingTones;
   private TextToSpeech tts;
   private String previewText;
   private ProgressDialog pdia;
-  private LinkedList<String> failedTones;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_confirm_contacts);
+  @ViewById SeekBar WPM_input;
+  @ViewById TextView WPM_hint;
+  @ViewById SeekBar FREQ_input;
+  @ViewById TextView FREQ_hint;
+  @ViewById EditText RC_input;
+  @ViewById Spinner format_spinner;
 
+  @Extra boolean forDefault = false;
+  @Extra boolean ringtone = false;
+  @Extra boolean notification = false;
+  @Extra String toneString;
+  @Extra String filename;
+  @Extra long [] selection;
+
+  @AfterViews
+  protected void load() {
     tts = new TextToSpeech(this, this);
 
-    if (getIntent().getBooleanExtra(extrakeyFordefault, false))
-      previewText = getIntent().getStringExtra(extrakeyTonestring);
+    if (forDefault)
+      previewText = toneString;
     else {
-      long[] selection = getIntent().getLongArrayExtra(extrakeySelection);
       if (selection.length == 0)
         previewText = "preview";
       else
         previewText = nameForContact(contactUriForID(selection[0]));
     }
 
-    ((SeekBar) findViewById(R.id.WPM_input)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-      @Override
+    WPM_input.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        ((TextView) findViewById(R.id.WPM_hint)).setText("" + wpm() + " wpm");
+        WPM_hint.setText("" + wpm() + " wpm");
       }
-      @Override
       public void onStartTrackingTouch(SeekBar seekBar) {}
-      @Override
       public void onStopTrackingTouch(SeekBar seekBar) {}
     });
 
-    ((SeekBar) findViewById(R.id.FREQ_input)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-      @Override
+    FREQ_input.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        ((TextView) findViewById(R.id.FREQ_hint)).setText("" + freqRescaled(20, 4410) + "Hz / " + freqNote().toUpperCase(Locale.getDefault()) + freqOctave());
+        FREQ_hint.setText("" + freqRescaled(20, 4410) + "Hz / " + freqNote().toUpperCase(Locale.getDefault()) + freqOctave());
       }
-      @Override
       public void onStartTrackingTouch(SeekBar seekBar) {}
-      @Override
       public void onStopTrackingTouch(SeekBar seekBar) {}
     });
   }
@@ -84,48 +84,20 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     tts.shutdown();
   }
 
-  private class Listener implements AsyncGenerateMorseTones.Listener {
-
-    String name;
-
-    public Listener(String name) {
-      this.name = name;
-    }
-
-    @Override
-    public void onFinished(boolean succeeded) {
-      if (!succeeded)
-        addFailedTone(name);
-      decrementOutstandingTones();
-    }
+  @UiThread
+  protected void dismissPdia() {
+    pdia.dismiss();
   }
 
-  private void checkDone() {
-    if (outstandingTones <= 0) {
-      pdia.dismiss();
-      if (failedTones.size() > 0) {
-        StringBuilder sb = new StringBuilder("Some ringtones could not be generated:\n");
-        for (String name : failedTones)
-          sb.append("  ").append(name).append("\n");
-        new AlertDialog.Builder(this)
-            .setMessage(sb.toString())
-            .setTitle("Something untoward has occurred.")
-            .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface di, int b) {
-              finish(); } })
-            .show();
-      } else
-        finish();
-    }
-  }
-
-  public synchronized void decrementOutstandingTones() {
-    outstandingTones--;
-    checkDone();
-  }
-
-  private synchronized void addFailedTone(String name) {
-    failedTones.add(name);
+  @UiThread
+  protected void announceFailure(String message)
+  {
+    dismissPdia();
+    new AlertDialog.Builder(this)
+      .setMessage(message)
+      .setTitle("Something untoward has occurred.")
+      .setPositiveButton("Okay", (DialogInterface di, int b) -> finish())
+      .show();
   }
 
   private Uri contactUriForID(long id) {
@@ -140,33 +112,45 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     return cursor.getString(0);
   }
 
-  public void generateAndAssignTones(View view) {
+  @Click
+  public void generate() {
     generateAndAssignTones(spinnerGen());
   }
 
   public void generateAndAssignTones(ToneGenerator gen) {
     pdia = ProgressDialog.show(this, "Generating", "Please wait", true, false);
-    failedTones = new LinkedList<String>();
-    if (getIntent().getBooleanExtra(extrakeyFordefault, false)) {
-      final String tonestring = getIntent().getStringExtra(extrakeyTonestring);
-      outstandingTones = 1;
-      final AsyncGenerateMorseTones async = new AsyncGenerateMorseTones();
-      async.execute(new AsyncGenerateMorseTones.Params(new Listener("default tone"), this, tonestring, gen, null, getIntent()));
-    } else {
-      final long[] selection = getIntent().getLongArrayExtra(extrakeySelection);
-      outstandingTones = selection.length;
-      for (long id : selection) {
-        final Uri contacturi = contactUriForID(id);
-        final String name = nameForContact(contacturi);
-        final AsyncGenerateMorseTones async = new AsyncGenerateMorseTones();
-        async.execute(new AsyncGenerateMorseTones.Params(new Listener(name), this, name, gen, contacturi, getIntent()));
+    if (forDefault)
+      generateDefaultTones(gen);
+    else
+      generateContactTones(gen);
+  }
+
+  @Background
+  protected void generateDefaultTones(ToneGenerator gen) {
+    try {
+      Tone.generateTone(this, toneString, gen, filename).assignDefault(this, ringtone, notification, false);
+    } catch (IOException e) {
+      announceFailure("Ringtone could not be generated.");
+    }
+    dismissPdia();
+  }
+
+  @Background
+  protected void generateContactTones(ToneGenerator gen) {
+    for (long id : selection) {
+      final Uri contacturi = contactUriForID(id);
+      final String name = nameForContact(contacturi);
+      try {
+        Tone.generateTone(this, name, gen, filename).assign(this, contacturi);
+      } catch (IOException e) {
+        announceFailure("Ringtone could not be generated: " + name);
       }
     }
-    checkDone();
+    dismissPdia();
   }
 
   public ToneGenerator spinnerGen() {
-    String sel = (String) ((Spinner) findViewById(R.id.format_spinner)).getSelectedItem();
+    Object sel = format_spinner.getSelectedItem();
     return sel.equals("Morse (WAV)") ? pcmGen() : sel.equals("Morse (iMelody)") ? imyGen() : ttsGen();
   }
 
@@ -191,9 +175,8 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
   }
 
   private int freqRescaled(int min, int max) {
-    ProgressBar pbar = ((ProgressBar) findViewById(R.id.FREQ_input));
-    final int freq = pbar.getProgress();
-    final int pmax = pbar.getMax();
+    final int freq = FREQ_input.getProgress();
+    final int pmax = FREQ_input.getMax();
     return min + ((max - min) * freq / pmax);
   }
 
@@ -202,7 +185,7 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
   }
 
   private int wpm() {
-    return 1 + ((ProgressBar) findViewById(R.id.WPM_input)).getProgress();
+    return 1 + WPM_input.getProgress();
   }
 
   private ToneGenerator pcmGen() {
@@ -211,7 +194,7 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
 
   private int repeatCount() {
     try {
-      return Integer.parseInt(((TextView) findViewById(R.id.RC_input)).getText().toString());
+      return Integer.parseInt(RC_input.getText().toString());
     } catch (NumberFormatException nfe) {
       return 0;
     }
@@ -237,7 +220,8 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     return new TTS(tts, freqRescaled(), wpm() / 20.0f, repeatCount());
   }
 
-  public void previewTone(View view) {
+  @Click
+  public void preview() {
     previewTone(spinnerGen());
   }
 
@@ -245,9 +229,7 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     AudioManager aman = (AudioManager) getSystemService(AUDIO_SERVICE);
     MediaPlayer player;
     try {
-      Intent i = new Intent();
-      i.putExtra(extrakeyFilename, Tone.tmpFilename());
-      Tone preview = Tone.generateTone(this, previewText, gen, i);
+      Tone preview = Tone.generateTone(this, previewText, gen, Tone.tmpFilename());
       player = MediaPlayer.create(this, preview.contentUri());
       OAFCL oafcl = new OAFCL(aman, preview);
       aman.requestAudioFocus(oafcl, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
@@ -259,10 +241,5 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
 
   @Override
   public void onInit(int status) {
-    if (status == TextToSpeech.SUCCESS)
-      enableTTS();
-  }
-
-  private void enableTTS() {
   }
 }

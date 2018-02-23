@@ -1,19 +1,12 @@
 package us.achromaticmetaphor.imcktg;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Environment;
@@ -21,11 +14,6 @@ import android.provider.ContactsContract;
 import android.provider.MediaStore;
 
 public class Tone {
-
-  private static final String extrakeyprefix = "us.achromaticmetaphor.imcktg";
-  public static final String extrakeyRingtone = extrakeyprefix + ".ringtone";
-  public static final String extrakeyNotification = extrakeyprefix + ".notification";
-  public static final String extrakeyAlarm = extrakeyprefix + ".alarm";
 
   private File file;
   private Uri contenturi;
@@ -67,8 +55,7 @@ public class Tone {
     return filenameTransform("us.achromaticmetaphor.imcktg.preview");
   }
 
-  private static File getToneFilename(Context c, String s, String ext, String typePrefix, Intent i) {
-    String userFilename = i.getStringExtra(ConfirmContacts.extrakeyFilename);
+  private static File getToneFilename(Context c, String s, String ext, String typePrefix, String userFilename) {
     File rtdir;
     File tone;
     if (userFilename == null) {
@@ -93,8 +80,8 @@ public class Tone {
     return tone;
   }
 
-  protected static Tone generateTone(Context c, String s, ToneGenerator gen, Intent i) throws IOException {
-    return generateTone(c, s, gen, getToneFilename(c, s, gen.filenameExt(), gen.filenameTypePrefix(), i));
+  protected static Tone generateTone(Context c, String s, ToneGenerator gen, String userFilename) throws IOException {
+    return generateTone(c, s, gen, getToneFilename(c, s, gen.filenameExt(), gen.filenameTypePrefix(), userFilename));
   }
 
   protected static void tmpRename(File tone) {
@@ -133,12 +120,17 @@ public class Tone {
     c.getContentResolver().update(contacturi, values, null, null);
   }
 
-  protected void assignDefault(Context context, Intent intent) {
-    if (intent.getBooleanExtra(extrakeyRingtone, false))
-      RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE, contentUri());
-    if (intent.getBooleanExtra(extrakeyNotification, false))
-      RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_NOTIFICATION, contentUri());
-    if (intent.getBooleanExtra(extrakeyAlarm, false))
-      RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_ALARM, contentUri());
+  private void assignDefault(Context c, int type, Uri contenturi) {
+    RingtoneManager.setActualDefaultRingtoneUri(c, type, contenturi);
+  }
+
+  protected void assignDefault(Context context, boolean ringtone, boolean notification, boolean alarm) {
+    Uri curi = contentUri();
+    if (ringtone)
+      assignDefault(context, RingtoneManager.TYPE_RINGTONE, curi);
+    if (notification)
+      assignDefault(context, RingtoneManager.TYPE_NOTIFICATION, curi);
+    if (alarm)
+      assignDefault(context, RingtoneManager.TYPE_ALARM, curi);
   }
 }

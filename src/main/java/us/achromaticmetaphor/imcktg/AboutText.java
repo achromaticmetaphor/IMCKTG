@@ -1,18 +1,23 @@
 package us.achromaticmetaphor.imcktg;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.ViewById;
+
+@EActivity(R.layout.activity_about)
 public class AboutText extends Activity {
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_about);
-    TextView tv = (TextView) findViewById(R.id.about);
-    tv.setMovementMethod(new ScrollingMovementMethod());
-    tv.setText(getIntent().getIntExtra("about_text", 0));
+  @ViewById TextView about;
+  @Extra int about_text = 0;
+
+  @AfterViews
+  protected void load() {
+    about.setMovementMethod(new ScrollingMovementMethod());
+    about.setText(about_text);
   }
 }

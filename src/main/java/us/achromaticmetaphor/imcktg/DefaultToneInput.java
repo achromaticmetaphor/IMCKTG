@@ -1,29 +1,28 @@
 package us.achromaticmetaphor.imcktg;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
+@EActivity(R.layout.activity_default_tone_input)
 public class DefaultToneInput extends Activity {
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_default_tone_input);
-  }
+  @ViewById TextView def_ringtone_text_box;
+  @ViewById CheckBox ringtone_checkbox;
+  @ViewById CheckBox notification_checkbox;
 
-  public void confirm(View view) {
-    String tonestring = ((TextView) findViewById(R.id.def_ringtone_text_box)).getText().toString();
-    Intent intent = new Intent(this, ConfirmContacts.class);
-    intent.putExtra(Tone.extrakeyRingtone, ((CheckBox) findViewById(R.id.ringtone_checkbox)).isChecked());
-    intent.putExtra(Tone.extrakeyNotification, ((CheckBox) findViewById(R.id.notification_checkbox)).isChecked());
-    intent.putExtra(ConfirmContacts.extrakeyTonestring, tonestring);
-    intent.putExtra(ConfirmContacts.extrakeyFordefault, true);
-
-    startActivity(intent);
+  @Click
+  public void confirm() {
+    ConfirmContacts_.intent(this)
+      .toneString(def_ringtone_text_box.getText().toString())
+      .ringtone(ringtone_checkbox.isChecked())
+      .notification(notification_checkbox.isChecked())
+      .forDefault(true)
+      .start();
     finish();
   }
 }

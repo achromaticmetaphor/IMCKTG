@@ -20,7 +20,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <activity
-            android:name="us.achromaticmetaphor.imcktg.GaAT"
+            android:name="us.achromaticmetaphor.imcktg.GaAT_"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,26 +28,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="us.achromaticmetaphor.imcktg.SelectContacts"
+            android:name="us.achromaticmetaphor.imcktg.SelectContacts_"
             android:label="@string/title_activity_select_contacts" >
         </activity>
         <activity
-            android:name="us.achromaticmetaphor.imcktg.DefaultToneInput"
+            android:name="us.achromaticmetaphor.imcktg.DefaultToneInput_"
             android:label="@string/title_activity_default_tone_input" >
         </activity>
         <activity
-            android:name="us.achromaticmetaphor.imcktg.ChooseFilename"
+            android:name="us.achromaticmetaphor.imcktg.ChooseFilename_"
             android:label="@string/title_activity_choose_filename" >
         </activity>
         <activity
-            android:name="us.achromaticmetaphor.imcktg.ConfirmContacts"
+            android:name="us.achromaticmetaphor.imcktg.ConfirmContacts_"
             android:label="@string/title_activity_confirm_contacts" >
         </activity>
         <activity
-            android:name="us.achromaticmetaphor.imcktg.About"
+            android:name="us.achromaticmetaphor.imcktg.About_"
             android:label="@string/title_activity_about" />
         <activity
-            android:name="us.achromaticmetaphor.imcktg.AboutText"
+            android:name="us.achromaticmetaphor.imcktg.AboutText_"
             android:label="@string/title_activity_about" />
     </application>
 

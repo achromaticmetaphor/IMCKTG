@@ -12,7 +12,7 @@
                 android:id="@+id/def_ringtone_text_box"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_above="@+id/default_tone_confirm"
+                android:layout_above="@+id/confirm"
                 android:layout_below="@+id/filename_text_box"
                 android:layout_centerHorizontal="true"
                 android:ems="10"
@@ -30,14 +30,13 @@
             </EditText>
 
             <Button
-                android:id="@+id/default_tone_confirm"
+                android:id="@+id/confirm"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="20dp"
-                android:onClick="confirm"
                 android:text="@string/confirm" />
 
 </RelativeLayout>

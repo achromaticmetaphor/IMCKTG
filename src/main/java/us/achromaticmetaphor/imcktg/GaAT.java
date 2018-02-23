@@ -3,7 +3,6 @@ package us.achromaticmetaphor.imcktg;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,23 +10,23 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
+@EActivity(R.layout.list_layout)
 public class GaAT extends Activity {
 
-  private final String menuAbout = "About";
+  private static final Class<?>[] activities = {SelectContacts_.class, DefaultToneInput_.class, ChooseFilename_.class};
+  private static final String menuAbout = "About";
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.list_layout);
-    String[] choices = new String[] {getString(R.string.for_contacts), getString(R.string.for_default), getString(R.string.for_tofile)};
-    final Class<?>[] activities = new Class[] {SelectContacts.class, DefaultToneInput.class, ChooseFilename.class};
-    ListView lview = (ListView) findViewById(R.id.cmdlist);
-    lview.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, choices));
-    lview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-      public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
-        startActivity(new Intent(GaAT.this, activities[pos]));
-      }
-    });
+  @ViewById ListView cmdlist;
+
+  @AfterViews
+  protected void load() {
+    String[] choices = {getString(R.string.for_contacts), getString(R.string.for_default), getString(R.string.for_tofile)};
+    cmdlist.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, choices));
+    cmdlist.setOnItemClickListener((AdapterView<?> av, View v, int pos, long id) -> startActivity(new Intent(this, activities[pos])));
   }
 
   @Override
@@ -44,7 +43,7 @@ public class GaAT extends Activity {
   public boolean onOptionsItemSelected(MenuItem mi) {
     super.onOptionsItemSelected(mi);
     if (mi.getTitle().equals(menuAbout))
-      startActivity(new Intent(this, About.class));
+      About_.intent(this).start();
     return true;
   }
 }

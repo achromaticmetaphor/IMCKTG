@@ -17,4 +17,18 @@ android {
   lintOptions {
     abortOnError false
   }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    annotationProcessor 'org.androidannotations:androidannotations:4.4.0'
+    implementation 'org.androidannotations:androidannotations-api:4.4.0'
+  }
 }

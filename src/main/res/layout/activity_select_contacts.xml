@@ -28,7 +28,6 @@
         android:layout_alignLeft="@android:id/list"
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@android:id/list"
-        android:text="@string/confirm"
-        android:onClick="confirmContacts" />
+        android:text="@string/confirm" />
 
 </RelativeLayout>
