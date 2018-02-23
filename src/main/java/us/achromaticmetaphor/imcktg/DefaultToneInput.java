@@ -1,6 +1,6 @@
 package us.achromaticmetaphor.imcktg;
 
-import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -9,7 +9,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_default_tone_input)
-public class DefaultToneInput extends Activity {
+public class DefaultToneInput extends AppCompatActivity {
 
   @ViewById TextView def_ringtone_text_box;
   @ViewById CheckBox ringtone_checkbox;

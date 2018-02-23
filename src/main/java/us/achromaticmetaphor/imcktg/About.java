@@ -1,6 +1,6 @@
 package us.achromaticmetaphor.imcktg;
 
-import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -11,7 +11,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_listview)
-public class About extends Activity {
+public class About extends AppCompatActivity {
 
   private static final String[] cmds = {"About app", "About icons"};
   private static final int[] texts = {R.string.about_code, R.string.about_icons};

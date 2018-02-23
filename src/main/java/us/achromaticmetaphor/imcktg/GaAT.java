@@ -1,8 +1,8 @@
 package us.achromaticmetaphor.imcktg;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +15,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.list_layout)
-public class GaAT extends Activity {
+public class GaAT extends AppCompatActivity {
 
   private static final Class<?>[] activities = {SelectContacts_.class, DefaultToneInput_.class, ChooseFilename_.class};
   private static final String menuAbout = "About";

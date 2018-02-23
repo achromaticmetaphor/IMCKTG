@@ -2,6 +2,7 @@ buildscript {
   repositories {
     jcenter()
     google()
+    mavenCentral()
   }
 
   dependencies {
@@ -24,11 +25,14 @@ android {
   }
 
   repositories {
+    jcenter()
+    google()
     mavenCentral()
   }
 
   dependencies {
     annotationProcessor 'org.androidannotations:androidannotations:4.4.0'
+    implementation 'com.android.support:appcompat-v7:23.4.0'
     implementation 'org.androidannotations:androidannotations-api:4.4.0'
   }
 }
