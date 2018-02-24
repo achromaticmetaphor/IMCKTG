@@ -24,6 +24,14 @@ android {
     targetCompatibility JavaVersion.VERSION_1_8
   }
 
+  buildTypes {
+    release {
+      minifyEnabled true
+      shrinkResources true
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+    }
+  }
+
   repositories {
     jcenter()
     google()
