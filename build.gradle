@@ -6,7 +6,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.0.1'
+    classpath 'com.android.tools.build:gradle:3.2.1'
   }
 }
 
@@ -39,8 +39,8 @@ android {
   }
 
   dependencies {
-    annotationProcessor 'org.androidannotations:androidannotations:4.4.0'
+    annotationProcessor 'org.androidannotations:androidannotations:4.5.1'
     implementation 'com.android.support:appcompat-v7:23.4.0'
-    implementation 'org.androidannotations:androidannotations-api:4.4.0'
+    implementation 'org.androidannotations:androidannotations-api:4.5.1'
   }
 }
