@@ -6,7 +6,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.2.1'
+    classpath 'com.android.tools.build:gradle:3.4.2'
   }
 }
 
@@ -32,6 +32,11 @@ android {
     }
   }
 
+  defaultConfig {
+    minSdkVersion 14
+    targetSdkVersion 21
+  }
+
   repositories {
     jcenter()
     google()
@@ -39,8 +44,8 @@ android {
   }
 
   dependencies {
-    annotationProcessor 'org.androidannotations:androidannotations:4.5.1'
+    annotationProcessor 'org.androidannotations:androidannotations:4.6.0'
     implementation 'com.android.support:appcompat-v7:23.4.0'
-    implementation 'org.androidannotations:androidannotations-api:4.5.1'
+    implementation 'org.androidannotations:androidannotations-api:4.6.0'
   }
 }
