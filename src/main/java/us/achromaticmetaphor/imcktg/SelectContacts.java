@@ -1,9 +1,12 @@
 package us.achromaticmetaphor.imcktg;
 
+import android.Manifest;
 import android.app.ListActivity;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -23,11 +26,21 @@ public class SelectContacts extends AppCompatActivity {
   private static final String menuSelectAll = "Select all";
   private static final String menuSelectNone = "Select none";
   private static final String menuInvertSelection = "Invert selection";
+  private static final int REQUEST_CODE_READ_CONTACTS = 1;
 
   @ViewById ListView list;
 
   @AfterViews
   protected void load() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED)) {
+      requestPermissions(new String [] {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS}, REQUEST_CODE_READ_CONTACTS);
+    }
+    else {
+      loadContacts();
+    }
+  }
+
+  private void loadContacts() {
     Cursor cursor = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,
                                                new String[] {ContactsContract.Contacts._ID,
                                                              ContactsContract.Contacts.DISPLAY_NAME,
@@ -40,6 +53,16 @@ public class SelectContacts extends AppCompatActivity {
                                                      cursor,
                                                      new String[] {ContactsContract.Contacts.DISPLAY_NAME},
                                                      new int[] {android.R.id.text1}));
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int rc, @NonNull String [] permissions, @NonNull int [] results) {
+    if (rc == REQUEST_CODE_READ_CONTACTS && results.length == 1 && results[0] == PackageManager.PERMISSION_DENIED) {
+      finish();
+    }
+    else {
+      loadContacts();
+    }
   }
 
   private void invertSelection() {

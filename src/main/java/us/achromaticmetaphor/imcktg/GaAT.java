@@ -1,7 +1,10 @@
 package us.achromaticmetaphor.imcktg;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +22,7 @@ public class GaAT extends AppCompatActivity {
 
   private static final Class<?>[] activities = {SelectContacts_.class, DefaultToneInput_.class, ChooseFilename_.class};
   private static final String menuAbout = "About";
+  private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1;
 
   @ViewById ListView cmdlist;
 
@@ -27,6 +31,16 @@ public class GaAT extends AppCompatActivity {
     String[] choices = {getString(R.string.for_contacts), getString(R.string.for_default), getString(R.string.for_tofile)};
     cmdlist.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, choices));
     cmdlist.setOnItemClickListener((AdapterView<?> av, View v, int pos, long id) -> startActivity(new Intent(this, activities[pos])));
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+      requestPermissions(new String [] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_WRITE_EXTERNAL_STORAGE);
+    }
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int rc, @NonNull String [] permissions, @NonNull int [] results) {
+    if (rc == REQUEST_CODE_WRITE_EXTERNAL_STORAGE && results.length == 1 && results[0] == PackageManager.PERMISSION_DENIED) {
+      finish();
+    }
   }
 
   @Override
