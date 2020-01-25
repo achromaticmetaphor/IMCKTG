@@ -13,7 +13,7 @@ buildscript {
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 23
+  compileSdkVersion 29
 
   lintOptions {
     abortOnError false
@@ -34,7 +34,7 @@ android {
 
   defaultConfig {
     minSdkVersion 14
-    targetSdkVersion 23
+    targetSdkVersion 29
   }
 
   repositories {
@@ -45,7 +45,8 @@ android {
 
   dependencies {
     annotationProcessor 'org.androidannotations:androidannotations:4.6.0'
-    implementation 'com.android.support:appcompat-v7:23.4.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'org.androidannotations:androidannotations-api:4.6.0'
   }
 }
