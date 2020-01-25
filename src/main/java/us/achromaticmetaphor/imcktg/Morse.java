@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import android.os.Build;
-
 public abstract class Morse {
 
   public static final int unitsPerWord = 50; // PARIS method
@@ -18,12 +16,12 @@ public abstract class Morse {
   public static final char pauseChar = ' ';
 
   private static void morse(String s, List<String> sb) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
-      s = Normalizer.normalize(s, Normalizer.Form.NFKD);
-    s = s.toLowerCase(Locale.getDefault());
-    s.replaceAll("\\s+", " ");
+    final char [] chars = Normalizer.normalize(s, Normalizer.Form.NFKD)
+                                    .toLowerCase(Locale.getDefault())
+                                    .replaceAll("\\s+", " ")
+                                    .toCharArray();
 
-    for (char c : s.toCharArray())
+    for (char c : chars)
       if (IMCmap.containsKey(c))
         sb.add(IMCmap.get(c));
   }

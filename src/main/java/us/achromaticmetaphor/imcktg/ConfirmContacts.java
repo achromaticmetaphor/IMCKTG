@@ -3,6 +3,7 @@ package us.achromaticmetaphor.imcktg;
 import java.io.IOException;
 import java.util.Locale;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -12,13 +13,10 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.speech.tts.TextToSpeech;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -29,7 +27,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_confirm_contacts)
-public class ConfirmContacts extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public class ConfirmContacts extends Activity implements TextToSpeech.OnInitListener {
 
   private TextToSpeech tts;
   private String previewText;

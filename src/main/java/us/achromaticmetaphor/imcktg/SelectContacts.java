@@ -1,6 +1,7 @@
 package us.achromaticmetaphor.imcktg;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
@@ -12,7 +13,6 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -20,7 +20,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_select_contacts)
-public class SelectContacts extends AppCompatActivity {
+public class SelectContacts extends Activity {
 
   private static final String menuSelectAll = "Select all";
   private static final String menuSelectNone = "Select none";
@@ -79,8 +79,7 @@ public class SelectContacts extends AppCompatActivity {
 
   private static MenuItem addMenuItem(Menu menu, String title) {
     MenuItem mi = menu.add(title);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-      mi.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    mi.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
     return mi;
   }
 

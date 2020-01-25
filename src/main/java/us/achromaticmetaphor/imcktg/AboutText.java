@@ -1,9 +1,8 @@
 package us.achromaticmetaphor.imcktg;
 
+import android.app.Activity;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -11,7 +10,7 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_about)
-public class AboutText extends AppCompatActivity {
+public class AboutText extends Activity {
 
   @ViewById TextView about;
   @Extra int about_text = 0;

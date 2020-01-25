@@ -1,6 +1,7 @@
 package us.achromaticmetaphor.imcktg;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -12,14 +13,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.list_layout)
-public class GaAT extends AppCompatActivity {
+public class GaAT extends Activity {
 
   private static final Class<?>[] activities = {SelectContacts_.class, DefaultToneInput_.class, ChooseFilename_.class};
   private static final String menuAbout = "About";
@@ -48,8 +48,7 @@ public class GaAT extends AppCompatActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
     MenuItem about = menu.add(menuAbout);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-      about.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    about.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
     about.setIcon(R.drawable.ic_action_about);
     return true;
   }

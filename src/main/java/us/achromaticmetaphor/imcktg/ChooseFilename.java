@@ -1,15 +1,14 @@
 package us.achromaticmetaphor.imcktg;
 
+import android.app.Activity;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_choose_filename)
-public class ChooseFilename extends AppCompatActivity {
+public class ChooseFilename extends Activity {
 
   @ViewById TextView def_ringtone_text_box;
   @ViewById TextView filename_text_box;
