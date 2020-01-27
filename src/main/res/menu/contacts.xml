@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/selectAll"
+          android:title="Select all"
+          android:icon="@drawable/ic_action_select_all"
+          android:showAsAction="ifRoom" />
+    <item android:id="@+id/selectNone"
+        android:title="Select none"
+        android:icon="@drawable/ic_action_select_none"
+        android:showAsAction="ifRoom" />
+    <item android:id="@+id/invertSelection"
+        android:title="Invert selection"
+        android:icon="@drawable/ic_action_invert_selection"
+        android:showAsAction="ifRoom" />
+</menu>
