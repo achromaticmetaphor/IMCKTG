@@ -3,8 +3,8 @@
     package="us.achromaticmetaphor.imcktg"
     android:installLocation="auto"
     android:screenOrientation="portrait"
-    android:versionCode="12"
-    android:versionName="0.5.1" >
+    android:versionCode="13"
+    android:versionName="0.6" >
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
