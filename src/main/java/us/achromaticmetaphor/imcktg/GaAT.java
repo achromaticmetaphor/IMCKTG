@@ -5,31 +5,24 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import androidx.annotation.NonNull;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
-
-@EActivity(R.layout.list_layout)
-@OptionsMenu(R.menu.gaat)
 public class GaAT extends Activity {
 
-  private static final Class<?>[] activities = {SelectContacts_.class, DefaultToneInput_.class, ChooseFilename_.class};
+  private static final Class<?>[] activities = {SelectContacts.class, DefaultToneInput.class, ChooseFilename.class};
   private static final int REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1;
 
-  @ViewById ListView cmdlist;
-
-  @AfterViews
-  protected void load() {
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.list_layout);
     String[] choices = {getString(R.string.for_contacts), getString(R.string.for_default), getString(R.string.for_tofile)};
+    ListView cmdlist = findViewById(R.id.cmdlist);
     cmdlist.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, choices));
     cmdlist.setOnItemClickListener((AdapterView<?> av, View v, int pos, long id) -> startActivity(new Intent(this, activities[pos])));
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -38,14 +31,24 @@ public class GaAT extends Activity {
   }
 
   @Override
-  public void onRequestPermissionsResult(int rc, @NonNull String [] permissions, @NonNull int [] results) {
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.gaat, menu);
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int rc, String [] permissions, int [] results) {
     if (rc == REQUEST_CODE_WRITE_EXTERNAL_STORAGE && results.length == 1 && results[0] == PackageManager.PERMISSION_DENIED) {
       finish();
     }
   }
 
-  @OptionsItem
-  protected void about() {
-    About_.intent(this).start();
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == R.id.about) {
+      startActivity(new Intent(this, About.class));
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 }

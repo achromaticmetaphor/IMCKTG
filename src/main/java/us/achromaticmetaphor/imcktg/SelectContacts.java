@@ -2,33 +2,34 @@ package us.achromaticmetaphor.imcktg;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.SparseBooleanArray;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-import androidx.annotation.NonNull;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
-
-@EActivity(R.layout.activity_select_contacts)
-@OptionsMenu(R.menu.contacts)
 public class SelectContacts extends Activity {
 
   private static final int REQUEST_CODE_READ_CONTACTS = 1;
 
-  @ViewById ListView list;
+  ListView list;
 
-  @AfterViews
-  protected void load() {
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_select_contacts);
+    list = findViewById(R.id.list);
+    findViewById(R.id.confirm).setOnClickListener(view -> {
+      Intent intent = new Intent(this, ConfirmContacts.class);
+      intent.putExtra("selection", list.getCheckedItemIds());
+      startActivity(intent);
+      finish();
+    });
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED)) {
       requestPermissions(new String [] {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS}, REQUEST_CODE_READ_CONTACTS);
     }
@@ -53,7 +54,7 @@ public class SelectContacts extends Activity {
   }
 
   @Override
-  public void onRequestPermissionsResult(int rc, @NonNull String [] permissions, @NonNull int [] results) {
+  public void onRequestPermissionsResult(int rc, String [] permissions, int [] results) {
     if (rc == REQUEST_CODE_READ_CONTACTS && results.length == 1 && results[0] == PackageManager.PERMISSION_DENIED) {
       finish();
     }
@@ -62,7 +63,29 @@ public class SelectContacts extends Activity {
     }
   }
 
-  @OptionsItem
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.contacts, menu);
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  public boolean onOptionsItemSelected(MenuItem item) {
+    int itemId = item.getItemId();
+    if (itemId == R.id.invertSelection) {
+      invertSelection();
+      return true;
+    }
+    if (itemId == R.id.selectAll) {
+      selectAll(true);
+      return true;
+    }
+    if (itemId == R.id.selectNone) {
+      selectAll(false);
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
   protected void invertSelection() {
     final int count = list.getCount();
     final SparseBooleanArray selected = list.getCheckedItemPositions();
@@ -74,23 +97,5 @@ public class SelectContacts extends Activity {
     final int count = list.getCount();
     for (int i = 0; i < count; i++)
       list.setItemChecked(i, b);
-  }
-
-  @OptionsItem
-  protected void selectAll() {
-    selectAll(true);
-  }
-
-  @OptionsItem
-  protected void selectNone() {
-    selectAll(false);
-  }
-
-  @Click
-  public void confirm() {
-    ConfirmContacts_.intent(this)
-      .selection(list.getCheckedItemIds())
-      .start();
-    finish();
   }
 }

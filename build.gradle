@@ -6,7 +6,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.4.2'
+    classpath 'com.android.tools.build:gradle:3.5.3'
   }
 }
 
@@ -41,11 +41,5 @@ android {
     jcenter()
     google()
     mavenCentral()
-  }
-
-  dependencies {
-    annotationProcessor 'org.androidannotations:androidannotations:4.6.0'
-    implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'org.androidannotations:androidannotations-api:4.6.0'
   }
 }

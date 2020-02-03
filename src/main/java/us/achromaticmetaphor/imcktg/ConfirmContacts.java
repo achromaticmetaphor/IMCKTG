@@ -7,10 +7,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.speech.tts.TextToSpeech;
 import android.widget.EditText;
@@ -18,63 +20,51 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
-
-@EActivity(R.layout.activity_confirm_contacts)
 public class ConfirmContacts extends Activity implements TextToSpeech.OnInitListener {
 
   private TextToSpeech tts;
   private String previewText;
   private ProgressDialog pdia;
 
-  @ViewById SeekBar WPM_input;
-  @ViewById TextView WPM_hint;
-  @ViewById SeekBar FREQ_input;
-  @ViewById TextView FREQ_hint;
-  @ViewById EditText RC_input;
-  @ViewById Spinner format_spinner;
+  SeekBar WPM_input;
+  SeekBar FREQ_input;
 
-  @Extra boolean forDefault = false;
-  @Extra boolean ringtone = false;
-  @Extra boolean notification = false;
-  @Extra String toneString;
-  @Extra String filename;
-  @Extra long [] selection;
-
-  @AfterViews
-  protected void load() {
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_confirm_contacts);
     tts = new TextToSpeech(this, this);
 
-    if (forDefault)
-      previewText = toneString;
+    final Intent intent = getIntent();
+    if (intent.getBooleanExtra("forDefault", false))
+      previewText = getIntent().getStringExtra("toneString");
     else {
+      long [] selection = intent.getLongArrayExtra("selection");
       if (selection.length == 0)
         previewText = "preview";
       else
         previewText = nameForContact(contactUriForID(selection[0]));
     }
 
+    WPM_input = findViewById(R.id.WPM_input);
     WPM_input.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        WPM_hint.setText("" + wpm() + " wpm");
+        ((TextView) findViewById(R.id.WPM_hint)).setText("" + wpm() + " wpm");
       }
       public void onStartTrackingTouch(SeekBar seekBar) {}
       public void onStopTrackingTouch(SeekBar seekBar) {}
     });
 
+    FREQ_input = findViewById(R.id.FREQ_input);
     FREQ_input.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        FREQ_hint.setText("" + freqRescaled(20, 4410) + "Hz / " + freqNote().toUpperCase(Locale.getDefault()) + freqOctave());
+        ((TextView) findViewById(R.id.FREQ_hint)).setText("" + freqRescaled(20, 4410) + "Hz / " + freqNote().toUpperCase(Locale.getDefault()) + freqOctave());
       }
       public void onStartTrackingTouch(SeekBar seekBar) {}
       public void onStopTrackingTouch(SeekBar seekBar) {}
     });
+
+    findViewById(R.id.generate).setOnClickListener(view -> generateAndAssignTones(spinnerGen()));
+    findViewById(R.id.preview).setOnClickListener(view -> previewTone(spinnerGen()));
   }
 
   @Override
@@ -83,20 +73,20 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     tts.shutdown();
   }
 
-  @UiThread
   protected void dismissPdia() {
-    pdia.dismiss();
+    runOnUiThread(pdia::dismiss);
   }
 
-  @UiThread
   protected void announceFailure(String message)
   {
-    dismissPdia();
-    new AlertDialog.Builder(this)
+    runOnUiThread(() -> {
+      dismissPdia();
+      new AlertDialog.Builder(this)
       .setMessage(message)
-      .setTitle("Something untoward has occurred.")
-      .setPositiveButton("Okay", (DialogInterface di, int b) -> finish())
-      .show();
+        .setTitle("Something untoward has occurred.")
+        .setPositiveButton("Okay", (DialogInterface di, int b) -> finish())
+        .show();
+    });
   }
 
   private Uri contactUriForID(long id) {
@@ -111,45 +101,45 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
     return cursor.getString(0);
   }
 
-  @Click
-  public void generate() {
-    generateAndAssignTones(spinnerGen());
-  }
-
   public void generateAndAssignTones(ToneGenerator gen) {
     pdia = ProgressDialog.show(this, "Generating", "Please wait", true, false);
-    if (forDefault)
+    if (getIntent().getBooleanExtra("forDefault", false))
       generateDefaultTones(gen);
     else
       generateContactTones(gen);
   }
 
-  @Background
   protected void generateDefaultTones(ToneGenerator gen) {
-    try {
-      Tone.generateTone(this, toneString, gen, filename).assignDefault(this, ringtone, notification, false);
-    } catch (IOException e) {
-      announceFailure("Ringtone could not be generated.");
-    }
-    dismissPdia();
+    new Thread(() -> {
+        try {
+          Intent intent = getIntent();
+          Tone.generateTone(this, intent.getStringExtra("toneString"), gen, intent.getStringExtra("filename"))
+              .assignDefault(this, intent.getBooleanExtra("ringtone", false), intent.getBooleanExtra("notification", false), false);
+        } catch (IOException e) {
+          announceFailure("Ringtone could not be generated.");
+        }
+        dismissPdia();
+    }).start();
   }
 
-  @Background
   protected void generateContactTones(ToneGenerator gen) {
-    for (long id : selection) {
-      final Uri contacturi = contactUriForID(id);
-      final String name = nameForContact(contacturi);
-      try {
-        Tone.generateTone(this, name, gen, filename).assign(this, contacturi);
-      } catch (IOException e) {
-        announceFailure("Ringtone could not be generated: " + name);
+    new Thread(() -> {
+      Intent intent = getIntent();
+      for (long id : intent.getLongArrayExtra("selection")) {
+        final Uri contacturi = contactUriForID(id);
+        final String name = nameForContact(contacturi);
+        try {
+          Tone.generateTone(this, name, gen, intent.getStringExtra("filename")).assign(this, contacturi);
+        } catch (IOException e) {
+          announceFailure("Ringtone could not be generated: " + name);
+        }
       }
-    }
-    dismissPdia();
+      dismissPdia();
+    }).start();
   }
 
   public ToneGenerator spinnerGen() {
-    Object sel = format_spinner.getSelectedItem();
+    Object sel = ((Spinner) findViewById(R.id.format_spinner)).getSelectedItem();
     return sel.equals("Morse (WAV)") ? pcmGen() : sel.equals("Morse (iMelody)") ? imyGen() : ttsGen();
   }
 
@@ -193,7 +183,7 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
 
   private int repeatCount() {
     try {
-      return Integer.parseInt(RC_input.getText().toString());
+      return Integer.parseInt(((EditText) findViewById(R.id.RC_input)).getText().toString());
     } catch (NumberFormatException nfe) {
       return 0;
     }
@@ -217,11 +207,6 @@ public class ConfirmContacts extends Activity implements TextToSpeech.OnInitList
 
   private ToneGenerator ttsGen() {
     return new TTS(tts, freqRescaled(), wpm() / 20.0f, repeatCount());
-  }
-
-  @Click
-  public void preview() {
-    previewTone(spinnerGen());
   }
 
   public void previewTone(ToneGenerator gen) {

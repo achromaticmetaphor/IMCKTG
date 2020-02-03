@@ -1,25 +1,21 @@
 package us.achromaticmetaphor.imcktg;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.widget.TextView;
 
-import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.ViewById;
-
-@EActivity(R.layout.activity_choose_filename)
 public class ChooseFilename extends Activity {
-
-  @ViewById TextView def_ringtone_text_box;
-  @ViewById TextView filename_text_box;
-
-  @Click
-  public void confirm() {
-    ConfirmContacts_.intent(this)
-      .forDefault(true)
-      .toneString(def_ringtone_text_box.getText().toString())
-      .filename(filename_text_box.getText().toString())
-      .start();
-    finish();
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_choose_filename);
+    findViewById(R.id.confirm).setOnClickListener(view -> {
+      Intent intent = new Intent(this, ConfirmContacts.class);
+      intent.putExtra("forDefault", true);
+      intent.putExtra("toneString", ((TextView) findViewById(R.id.def_ringtone_text_box)).getText().toString());
+      intent.putExtra("filename", ((TextView) findViewById(R.id.filename_text_box)).getText().toString());
+      startActivity(intent);
+      finish();
+    });
   }
 }
