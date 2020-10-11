@@ -52,7 +52,7 @@ class Tone private constructor(private val file: File) {
     fun contentUri() = contenturi
 
     private fun expunge(c: Context) {
-        c.contentResolver.delete(toneStoreUri(c), MediaStore.Audio.Media.DATA + " = ?", arrayOf(file().absolutePath))
+        c.contentResolver.delete(toneStoreUri(c)!!, MediaStore.Audio.Media.DATA + " = ?", arrayOf(file().absolutePath))
     }
 
     fun delete(c: Context) {
@@ -72,7 +72,7 @@ class Tone private constructor(private val file: File) {
             put(MediaStore.Audio.Media.IS_NOTIFICATION, false)
             put(MediaStore.Audio.Media.IS_RINGTONE, false)
         }
-        contenturi = c.contentResolver.insert(toneStoreUri(c), storevalues)
+        contenturi = c.contentResolver.insert(toneStoreUri(c)!!, storevalues)
     }
 
     fun assign(c: Context, contacturi: Uri) {

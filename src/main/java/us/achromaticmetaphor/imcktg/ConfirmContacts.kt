@@ -96,7 +96,7 @@ class ConfirmContacts : Activity(), OnInitListener {
     protected fun generateDefaultTones(gen: ToneGenerator) {
         Thread(Runnable {
             try {
-                Tone.generateTone(this, intent.getStringExtra("toneString"), gen, intent.getStringExtra("filename"))
+                Tone.generateTone(this, intent.getStringExtra("toneString")!!, gen, intent.getStringExtra("filename"))
                         .assignDefault(this, intent.getBooleanExtra("ringtone", false), intent.getBooleanExtra("notification", false), false)
             } catch (e: IOException) {
                 announceFailure("Ringtone could not be generated.")

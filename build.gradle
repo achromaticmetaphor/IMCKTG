@@ -17,7 +17,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-  compileSdkVersion 29
+  compileSdkVersion 30
 
   lintOptions {
     abortOnError false
@@ -38,7 +38,7 @@ android {
 
   defaultConfig {
     minSdkVersion 14
-    targetSdkVersion 29
+    targetSdkVersion 30
   }
 
   repositories {
