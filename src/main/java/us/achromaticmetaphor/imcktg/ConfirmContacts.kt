@@ -22,6 +22,14 @@ import android.widget.TextView
 import java.io.IOException
 import java.util.Locale
 
+class TextSetter(private val view: TextView, val value: () -> String) : OnSeekBarChangeListener {
+    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) { view.text = value() }
+    override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
+    override fun onStopTrackingTouch(seekBar: SeekBar) = Unit
+}
+
+private fun rescaleBar(min: Int, max: Int, bar: SeekBar) = min + (max - min) * bar.progress / bar.max
+
 class ConfirmContacts : Activity(), OnInitListener {
     private var tts: TextToSpeech? = null
     private var previewText: String? = null
@@ -37,25 +45,13 @@ class ConfirmContacts : Activity(), OnInitListener {
             val selection = intent.getLongArrayExtra("selection")!!
             if (selection.isEmpty()) "preview" else nameForContact(contactUriForID(selection[0]))
         }
+        val WPM_hint = findViewById<TextView>(R.id.WPM_hint)
         WPM_input = findViewById<SeekBar>(R.id.WPM_input).apply {
-            setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                    (findViewById<View>(R.id.WPM_hint) as TextView).text = "" + wpm() + " wpm"
-                }
-
-                override fun onStartTrackingTouch(seekBar: SeekBar) {}
-                override fun onStopTrackingTouch(seekBar: SeekBar) {}
-            })
+            setOnSeekBarChangeListener(TextSetter(WPM_hint) { "" + wpm() + " wpm" })
         }
+        val FREQ_hint = findViewById<TextView>(R.id.FREQ_hint)
         FREQ_input = findViewById<SeekBar>(R.id.FREQ_input).apply {
-            setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                    (findViewById<View>(R.id.FREQ_hint) as TextView).text = "" + freqRescaled(20, 4410) + "Hz / " + freqNote().toUpperCase(Locale.getDefault()) + freqOctave()
-                }
-
-                override fun onStartTrackingTouch(seekBar: SeekBar) {}
-                override fun onStopTrackingTouch(seekBar: SeekBar) {}
-            })
+            setOnSeekBarChangeListener(TextSetter(FREQ_hint) { "" + freqRescaled(20, 4410) + "Hz / " + freqNote().toUpperCase(Locale.getDefault()) + freqOctave() })
         }
         findViewById<View>(R.id.generate).setOnClickListener { generateAndAssignTones(spinnerGen()) }
         findViewById<View>(R.id.preview).setOnClickListener { previewTone(spinnerGen()) }
@@ -80,7 +76,6 @@ class ConfirmContacts : Activity(), OnInitListener {
                     .show()
         }
     }
-
 
     private fun nameForContact(contacturi: Uri): String {
         val cursor = contentResolver.query(contacturi, arrayOf(ContactsContract.Contacts.DISPLAY_NAME), null, null, null)!!
@@ -135,7 +130,6 @@ class ConfirmContacts : Activity(), OnInitListener {
 
     }
 
-
     private fun repeatCount(): Int {
         return try {
             (findViewById<View>(R.id.RC_input) as EditText).text.toString().toInt()
@@ -144,7 +138,7 @@ class ConfirmContacts : Activity(), OnInitListener {
         }
     }
 
-    private fun freqRescaled(min: Int, max: Int) = min + (max - min) * FREQ_input!!.progress / FREQ_input!!.max
+    private fun freqRescaled(min: Int, max: Int) = rescaleBar(min, max, FREQ_input!!)
     private fun contactUriForID(id: Long) = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, "" + id)
     private fun freqRescaled() = (freqRescaled(20, 4410) + 2195) / 2195.0f
     private fun wpm() = 1 + WPM_input!!.progress
