@@ -2,7 +2,7 @@ package us.achromaticmetaphor.imcktg
 
 import java.io.PrintStream
 
-private val validNotes = setOf("a", "#a", "&a", "b", "#b", "&b", "c", "#c", "&c", "d", "#d", "&d", "e", "#e", "&e", "f", "#f", "&f")
+private val validNotes = setOf("a", "#a", "&a", "b", "#b", "&b", "c", "#c", "&c", "d", "#d", "&d", "e", "#e", "&e", "f", "#f", "&f", "g", "#g", "&g")
 private val validStyles = setOf("S0", "S1", "S2")
 private const val octavePrefix = "*"
 private const val durationSuffixDotted = "."
