@@ -62,17 +62,27 @@ class Tone private constructor(private val file: File) {
 
     private fun toneStoreUri(c: Context) = MediaStore.Audio.Media.getContentUriForPath(file().absolutePath)
 
-    fun generateToneTail(c: Context, s: String) {
+    fun generateToneTail(gen: ToneGenerator, c: Context, s: String) {
         expunge(c)
         val storevalues = ContentValues().apply {
-            put(MediaStore.Audio.Media.DATA, file().absolutePath)
+            if (!useScopedStorage) {
+                put(MediaStore.Audio.Media.DATA, file().absolutePath)
+            }
             put(MediaStore.Audio.Media.TITLE, s)
             put(MediaStore.Audio.Media.IS_MUSIC, false)
             put(MediaStore.Audio.Media.IS_ALARM, false)
-            put(MediaStore.Audio.Media.IS_NOTIFICATION, false)
-            put(MediaStore.Audio.Media.IS_RINGTONE, false)
+            put(MediaStore.Audio.Media.IS_NOTIFICATION, true)
+            put(MediaStore.Audio.Media.IS_RINGTONE, true)
         }
-        contenturi = c.contentResolver.insert(toneStoreUri(c)!!, storevalues)
+        if (useScopedStorage) {
+            contenturi = c.contentResolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, storevalues)
+            c.contentResolver.openOutputStream(contenturi!!).use { output ->
+                gen.writeTone(output!!, s, true)
+            }
+        }
+        else {
+            contenturi = c.contentResolver.insert(toneStoreUri(c)!!, storevalues)
+        }
     }
 
     fun assign(c: Context, contacturi: Uri) {
@@ -97,8 +107,10 @@ class Tone private constructor(private val file: File) {
         @Throws(IOException::class)
         fun generateTone(c: Context, s: String, gen: ToneGenerator, file: File): Tone {
             return Tone(file).apply{
-                gen.writeTone(file(), s, true)
-                generateToneTail(c, s)
+                if (!useScopedStorage) {
+                    gen.writeTone(file(), s, false)
+                }
+                generateToneTail(gen, c, s)
             }
         }
 

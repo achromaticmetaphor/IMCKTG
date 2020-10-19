@@ -147,7 +147,7 @@ class ConfirmContacts : Activity(), OnInitListener {
     private fun freqOctave() = freqTone() / 7
     private fun freqNote() = "cdefgab".substring(freqTone() % 7).substring(0, 1)
     private fun imyGen(): ToneGenerator = MorseIMelody(freqOctave(), freqNote(), wpm(), repeatCount())
-    private fun ttsGen(): ToneGenerator = TTS(tts!!, freqRescaled(), wpm() / 20.0f, repeatCount())
+    private fun ttsGen(): ToneGenerator = TTS(tts!!, freqRescaled(), wpm() / 20.0f, repeatCount(), this)
 
     fun previewTone(gen: ToneGenerator) {
         val aman = getSystemService(Context.AUDIO_SERVICE) as AudioManager

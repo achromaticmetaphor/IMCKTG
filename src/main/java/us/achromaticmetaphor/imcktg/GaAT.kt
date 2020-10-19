@@ -12,6 +12,8 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
 
+val useScopedStorage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
 private val activities = arrayOf<Class<*>>(SelectContacts::class.java, DefaultToneInput::class.java, ChooseFilename::class.java)
 private const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 1
 
@@ -23,7 +25,7 @@ class GaAT : Activity() {
             adapter = ArrayAdapter(this@GaAT, android.R.layout.simple_list_item_1, arrayOf(getString(R.string.for_contacts), getString(R.string.for_default), getString(R.string.for_tofile)))
             onItemClickListener = OnItemClickListener { _, _, pos: Int, _ -> startActivity(Intent(this@GaAT, activities[pos])) }
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !useScopedStorage && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_CODE_WRITE_EXTERNAL_STORAGE)
         }
     }
