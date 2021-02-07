@@ -1,5 +1,5 @@
 buildscript {
-  ext.kotlin_version = '1.4.10'
+  ext.kotlin_version = '1.4.30'
   repositories {
     jcenter()
     google()
@@ -14,7 +14,6 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 android {
   compileSdkVersion 30
