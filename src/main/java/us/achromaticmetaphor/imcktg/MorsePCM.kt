@@ -114,6 +114,6 @@ class MorsePCM(private val freq: Int, private val sampleRate: Int, private val w
         Arrays.fill(silent, Byte.MAX_VALUE)
         samplevec = Array(sampleRate / freq) { ByteArray(samplesPerPulse) }
         val scale = Math.PI * 2 * freq / sampleRate
-        for (i in samplevec.indices) for (j in 0 until samplevec[i].count()) samplevec[i][j] = (Byte.MAX_VALUE + Byte.MAX_VALUE * Math.sin((i * samplevec[i].count() + j) * scale)).toByte()
+        for (i in samplevec.indices) for (j in 0 until samplevec[i].count()) samplevec[i][j] = (Byte.MAX_VALUE + Byte.MAX_VALUE * Math.sin((i * samplevec[i].count() + j) * scale)).toInt().toByte()
     }
 }
