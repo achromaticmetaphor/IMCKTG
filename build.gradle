@@ -1,21 +1,20 @@
 buildscript {
-  ext.kotlin_version = '1.5.30'
   repositories {
     google()
     mavenCentral()
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:7.0.2'
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath 'com.android.tools.build:gradle:8.1.1'
   }
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 
 android {
-  compileSdkVersion 30
+  namespace "us.achromaticmetaphor.imcktg"
+
+  compileSdk 33
 
   lintOptions {
     abortOnError false
@@ -23,15 +22,11 @@ android {
 
   defaultConfig {
     minSdkVersion 14
-    targetSdkVersion 30
+    targetSdkVersion 33
   }
 
   repositories {
     google()
     mavenCentral()
-  }
-
-  dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
   }
 }
